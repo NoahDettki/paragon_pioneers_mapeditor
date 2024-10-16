@@ -1,0 +1,100 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" modified="2024-10-16T13:14:28.791Z" etag="7JDz3zNws6QF6JBWIe4j" version="22.1.2" type="device">
+  <diagram name="Seite-1" id="r_l7knYTEhIjURoLvOF8">
+    <mxGraphModel dx="2960" dy="2900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hDkcawTotPRm4YRxNyFn-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="50" y="-40" width="1660" height="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-4" value="Drag &amp;amp; Drop&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="80" width="800" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-1" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Title&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="360" y="10" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-2" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Import Map&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="350" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-3" value="Text Area" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="70" width="600" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-11" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="80" y="480" width="800" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-12" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="810" y="480" width="70" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-13" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="500" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-14" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="570" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-15" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="640" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-16" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="710" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-17" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="780" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-18" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="850" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-19" value="&lt;font color=&quot;#757575&quot; style=&quot;font-size: 24px;&quot;&gt;&lt;b style=&quot;&quot;&gt;Map&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="445" y="680" width="70" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-22" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="80" y="480" width="730" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-21" value="Exportieren" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="80" y="480" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-23" value="Importieren" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="480" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-24" value="" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="80" y="970" width="440" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-25" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Willst du wirklich eine neue Map importieren?&lt;br&gt;Der ungespeicherte Fortschritt geht verloren.&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="80" y="970" width="440" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-26" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Nein&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="414" y="1070" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-27" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Ja&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="110" y="1070" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-33" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="80" y="1210" width="440" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-28" value="" style="whiteSpace=wrap;html=1;" parent="yMgBW20SeRb1qe7XqpGB-33" vertex="1">
+          <mxGeometry width="440" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-29" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Wohin soll die Datei exportiert werden?&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="yMgBW20SeRb1qe7XqpGB-33" vertex="1">
+          <mxGeometry width="440" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-30" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&amp;nbsp; /path/to/export/location/file.txt&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;" parent="yMgBW20SeRb1qe7XqpGB-33" vertex="1">
+          <mxGeometry x="50" y="90" width="340" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-32" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Exportieren&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="yMgBW20SeRb1qe7XqpGB-33" vertex="1">
+          <mxGeometry x="50" y="140" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-37" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Export Menu&lt;/h1&gt;&lt;p&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;Das Export Menu öffnet sich, wenn der User den Button &quot;Exportieren&quot; drückt. Man wird dann aufgefordert einen Speicherort auszuwählen und die Datei wird wenn man den &quot;Exportieren&quot; Button drückt an dem Speicherort gespeichert.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="551" y="1230" width="690" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-38" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Import Menu&lt;/h1&gt;&lt;p&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;Das Import Menu öffnet sich, wenn die App gestartet wird oder der Button &quot;Importieren&quot; auf der Map Ansicht gedrückt wird. Man kann Dateien über Drag &amp;amp; Drop, als Text oder über einen &quot;Importieren&quot; Button importieren. Nach dem Import wird man auf die Map Ansicht weitergeleitet&lt;/span&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="950" y="130" width="690" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="yMgBW20SeRb1qe7XqpGB-39" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Map Ansicht&lt;/h1&gt;&lt;p&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;Über das ganze Fenster sieht man die importierte Map. Die Map ist scrollbar mit &amp;lt;Taste&amp;gt;. Auf der rechten Seite befindet sich ein Tool Menu wo man unterschiedliche Felder auswählen kann und diese dann auf der Map platzieren kann&lt;/span&gt;&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="950" y="650" width="690" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="TZQK1XmU57vWXRUK-bYB-1" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Wirklich löschen? Fenster&lt;/h1&gt;&lt;p&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;Das &quot;Wirklich löschen?&quot; Fenster öffnet sich, wenn man in der Map Ansicht den &quot;Importieren&quot; Button klickt. Die Information das ungespeicherte Daten verloren gehen wird angezeigt. Wenn Ja gedrückt wird, dann wird das Import Menu geöffnet.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="540" y="970" width="690" height="150" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
