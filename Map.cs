@@ -10,12 +10,21 @@ namespace ParagonPioneers
     {
         private int[,] tiles;
         private const int IMAGE_SIZE = 16;
-        private float zoom = 3;
 
-        private readonly Dictionary<int, String> images = new Dictionary<int, String>()
+        // Map tile pictures
+        PictureBox[,] mapPictures;
+
+        // Dragging and zooming the map
+        private bool isDragging = false;
+        private Point lastDragPoint;
+        private Point dragOffset;
+        private float zoom = 3;
+        private float currentTileSize;
+
+        private readonly Dictionary<int, Image> tileImages = new Dictionary<int, Image>()
         {
-            [0] = Path.Combine(Application.StartupPath, "Images", "Water.png"),
-            [1] = Path.Combine(Application.StartupPath, "Images", "Land.png"),
+            [0] = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Water.png")),
+            [1] = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land.png")),
         };
 
         public Map(int[,] tiles)
@@ -29,21 +38,32 @@ namespace ParagonPioneers
 
         private void Init()
         {
-            // DataGridView settings
-            grid.Dock = DockStyle.Fill;
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.AllowUserToResizeColumns = false;
-            grid.AllowUserToResizeRows = false;
-            grid.RowHeadersVisible = false;
-            grid.ColumnHeadersVisible = false;
-            grid.RowTemplate.Height = IMAGE_SIZE;
-            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-
-            grid.RowTemplate.Height = (int) (IMAGE_SIZE * zoom);
-
+            // Window header
             this.Text = "Tile Grid";
 
+            // -- Panel settings (mapPanel) ----------------------
+
+            // Removing the ScrollBars
+            mapPanel.AutoScroll = false;
+            mapPanel.HorizontalScroll.Maximum = 0;
+            mapPanel.VerticalScroll.Maximum = 0;
+            mapPanel.AutoScroll = true;
+
+            // Register the events for drag detection
+            mapPanel.MouseDown += Map_MouseDown;
+            mapPanel.MouseMove += Map_MouseMove;
+            mapPanel.MouseUp += Map_MouseUp;
+
+            // Enable the panel to receive mouse wheel events
+            mapPanel.MouseWheel += Map_MouseWheel;
+
+            // Ensure the panel can gain focus
+            mapPanel.TabStop = true;
+            mapPanel.Focus();
+
+            // -- Panel settings end -----------------------------
+
+            currentTileSize = IMAGE_SIZE * zoom;
             PopulateGrid();
         }
 
@@ -52,38 +72,98 @@ namespace ParagonPioneers
             int rows = tiles.GetLength(0);
             int cols = tiles.GetLength(1);
 
+            mapPictures = new PictureBox[rows, cols];
+
             for (int col = 0; col < cols; col++)
             {
-                grid.Columns.Add(new DataGridViewImageColumn
+                for (int row = 0; row < rows; row++)
                 {
-                    Name = "Col" + col,
-                    ImageLayout = DataGridViewImageCellLayout.Zoom,
-                    Width = (int)(IMAGE_SIZE * zoom)
-                });
-            }
+                    int tileId = tiles[row, col];
+                    mapPictures[col, row] = new PictureBox {
+                        Image = tileImages[tileId],
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        Size = new Size((int)currentTileSize, (int)currentTileSize),
+                        Location = new Point((int)(col * currentTileSize), (int)(row * currentTileSize)),
+                    };
 
-            // Populate the grid with TileType values
-            for (int row = 0; row < rows; row++)
-            {
-                grid.Rows.Add();
+                    mapPictures[col, row].MouseDown += Map_MouseDown;
+                    mapPictures[col, row].MouseMove += Map_MouseMove;
+                    mapPictures[col, row].MouseUp += Map_MouseUp;
 
-                for (int col = 0; col < cols; col++)
-                {
-                    int tile = tiles[row, col];
-                    grid.Rows[row].Cells[col].Value = Image.FromFile(images[tile]);
+                    // Add the PictureBox to the panel
+                    mapPanel.Controls.Add(mapPictures[col, row]);
                 }
             }
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
+        /// <summary>
+        /// If the user clicks a PictureBox e will only contain the cursor position relative to itself,
+        /// while clicking the Panel results in the cursor position relative to the panel.
+        /// This funciton brings both points to screen positions so that they function the same.
+        /// </summary>
+        /// <param name="sender">Either the map panel or one of the maps cells</param>
+        /// <param name="e">The MouseEventArgs</param>
+        /// <returns>A Point relative to the client coordinate system.</returns>
+        private Point GetCursorPosition(object sender, MouseEventArgs e) {
+            if (sender is PictureBox) {
+                return ((PictureBox)sender).Parent.PointToClient(Cursor.Position);
+            } else if (sender is Panel) {
+                return ((Panel)sender).PointToClient(Cursor.Position);
+            }
+            return new Point(); ;
         }
-    }
 
-    public enum TileType
-    {
-        Water = 0,
-        Land = 1,
+        /// <summary>
+        /// Starts dragging the map.
+        /// </summary>
+        /// <param name="sender">Either the map panel or one of the maps cells</param>
+        /// <param name="e">The MouseEventArgs</param>
+        private void Map_MouseDown(object sender, MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                isDragging = true;
+                lastDragPoint = GetCursorPosition(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// Called while the user drags the map. This function places the map cells to their new positions.
+        /// </summary>
+        /// <param name="sender">Either the map panel or one of the maps cells</param>
+        /// <param name="e">The MouseEventArgs</param>
+        private void Map_MouseMove(object sender, MouseEventArgs e) {
+            if (isDragging) {
+                Point currentPos = GetCursorPosition(sender, e);
+                dragOffset = new Point(currentPos.X - lastDragPoint.X, currentPos.Y - lastDragPoint.Y);
+
+                // Move all PictureBoxes of the map
+                for (int col = 0; col < mapPictures.GetLength(0); col++) {
+                    for (int row = 0; row < mapPictures.GetLength(1); row++) {
+                        mapPictures[row, col].Location = new Point(mapPictures[row, col].Location.X + dragOffset.X, mapPictures[row, col].Location.Y + dragOffset.Y);
+                    }
+                }
+
+                lastDragPoint = GetCursorPosition(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// Ends dragging the map.
+        /// </summary>
+        /// <param name="sender">Either the map panel or one of the maps cells</param>
+        /// <param name="e">The MouseEventArgs</param>
+        private void Map_MouseUp(object sender, MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                isDragging = false;
+            }
+        }
+
+        private void Map_MouseWheel(object sender, MouseEventArgs e) {
+            // Custom behavior based on scroll direction
+            if (e.Delta > 0) {
+                MessageBox.Show("Mouse wheel scrolled up!");
+            } else if (e.Delta < 0) {
+                MessageBox.Show("Mouse wheel scrolled down!");
+            }
+        }
     }
 }

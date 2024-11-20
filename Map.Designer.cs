@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.grid = new System.Windows.Forms.DataGridView();
+            this.mapPanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -49,13 +50,21 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.Size = new System.Drawing.Size(800, 450);
             this.grid.TabIndex = 0;
-            this.grid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            // 
+            // mapPanel
+            // 
+            this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mapPanel.Location = new System.Drawing.Point(0, 0);
+            this.mapPanel.Name = "mapPanel";
+            this.mapPanel.Size = new System.Drawing.Size(800, 450);
+            this.mapPanel.TabIndex = 1;
             // 
             // Map
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.mapPanel);
             this.Controls.Add(this.grid);
             this.Name = "Map";
             this.Text = "Map";
@@ -67,5 +76,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView grid;
+        private System.Windows.Forms.Panel mapPanel;
     }
 }
