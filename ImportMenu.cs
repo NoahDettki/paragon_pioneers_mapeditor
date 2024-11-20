@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace ParagonPioneers {
     public partial class ImportMenu : Form {
@@ -32,7 +35,34 @@ namespace ParagonPioneers {
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //TODO Show Map Screen
+            //removing whitespaces and line breaks
+            string json = Regex.Replace(textBox1.Text, @"\s+", "");
+
+            if (IsValidJson(json))
+            {
+                int[,] jsonArray = JsonConvert.DeserializeObject<int[,]>(@json);
+                //show map form and pass the validated array
+                (new Map(jsonArray)).Show();
+            }
+            else
+            {
+                MessageBox.Show("Your JSON is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool IsValidJson(string json)
+        {
+            try
+            {
+                //tries to create a int[,] from json. If it fails it returns false
+                int[,] jsonArray = JsonConvert.DeserializeObject<int[,]>(json);
+                //returns if the json string only contains [ ] 0 1 ,
+                return Regex.IsMatch(json, @"^[\[\], 01]*$"); ;
+            }
+            catch 
+            {
+                return false;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -53,8 +83,8 @@ namespace ParagonPioneers {
                     // Read file content
                     string fileContent = File.ReadAllText(filePath);
 
-                    // Display file content in a TextBox or any other control
-                    textBox1.Text = fileContent; // Assuming txtDisplay is a TextBox
+                    // Display file content in a TextBox
+                    textBox1.Text = fileContent;
                 }
                 catch (Exception ex)
                 {

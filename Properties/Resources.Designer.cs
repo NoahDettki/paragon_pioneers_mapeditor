@@ -61,12 +61,22 @@ namespace ParagonPioneers.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static System.Drawing.Bitmap background {
+        internal static byte[] Land {
             get {
-                object obj = ResourceManager.GetObject("background", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("Land", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] Water {
+            get {
+                object obj = ResourceManager.GetObject("Water", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }
