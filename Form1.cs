@@ -18,10 +18,15 @@ namespace ParagonPioneers {
         public Form1() {
             InitializeComponent();
 
+            ScrollableControl1.AutoScroll = false;
+            ScrollableControl1.HorizontalScroll.Maximum = 0;
+            ScrollableControl1.VerticalScroll.Maximum = 0;
+            ScrollableControl1.AutoScroll = true;
+
             // Register the events for drag detection
-            ScrollableControl1.MouseDown += ScrollableControl1_MouseDown;
-            ScrollableControl1.MouseMove += ScrollableControl1_MouseMove;
-            ScrollableControl1.MouseUp += ScrollableControl1_MouseUp;
+            ScrollableControl1.MouseDown += Map_MouseDown;
+            ScrollableControl1.MouseMove += Map_MouseMove;
+            ScrollableControl1.MouseUp += Map_MouseUp;
 
             // Enable the panel to receive mouse wheel events
             ScrollableControl1.MouseWheel += ScrollableControl1_MouseWheel;
@@ -37,7 +42,6 @@ namespace ParagonPioneers {
             images.Add(3, Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\Cells\\dummy4.png")));
             images.Add(4, Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\Cells\\dummy5.png")));
             images.Add(5, Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\Cells\\dummy6.png")));
-            //displayMap(new Map());
 
             picture = new PictureBox {
                 Image = images[4],
@@ -45,65 +49,83 @@ namespace ParagonPioneers {
                 Location = new Point(50, 50)
             };
 
-            // Forward mouse events from pictures to panel
-            picture.MouseDown += (s, e) => ScrollableControl1_MouseDown(ScrollableControl1, e);
-            picture.MouseMove += (s, e) => ScrollableControl1_MouseMove(ScrollableControl1, e);
-            picture.MouseUp += (s, e) => ScrollableControl1_MouseUp(ScrollableControl1, e);
+            picture.MouseDown += Map_MouseDown;
+            picture.MouseMove += Map_MouseMove;
+            picture.MouseUp += Map_MouseUp;
 
             // Add the PictureBox to the panel
             ScrollableControl1.Controls.Add(picture);
         }
 
+
+        //// Add columns
+        //for (int x = 0; x < map.Cells.Count(); x++) {
+        //    DataGridViewImageColumn column = new DataGridViewImageColumn();
+        //    column.Width = 128;
+        //    dataGridView1.Columns.Add(column);
+        //}
+
+        //// Add rows
+        //for (int x = 0; x < map.Cells.Count(); x++) {
+        //    Object[] row = new Object[map.Cells.Count()];
+        //    for (int y = 0; y < map.Cells[x].Count(); y++) {
+        //        row[y] = images[map.Cells[x][y].ImageId];
+        //    }
+        //    dataGridView1.Rows.Add(row);
+        //}
+
+
         /// <summary>
-        /// The pngs from the map array are transferred to the DataGridView
+        /// If the user clicks a PictureBox e will only contain the cursor position relative to itself,
+        /// while clicking the Panel results in the cursor position relative to the panel.
+        /// This funciton brings both points to screen positions so that they function the same.
         /// </summary>
-        private void displayMap(Map map) {
-            dataGridView1.RowHeadersVisible = false;
-            dataGridView1.ColumnHeadersVisible = false;
-            dataGridView1.BorderStyle = BorderStyle.None;
-            dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
-            dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.None;
-            dataGridView1.RowTemplate.Height = 128;
-            dataGridView1.AllowUserToAddRows = false;
-
-            // Add columns
-            for (int x = 0; x < map.Cells.Count(); x++) {
-                DataGridViewImageColumn column = new DataGridViewImageColumn();
-                column.Width = 128;
-                dataGridView1.Columns.Add(column);
+        /// <param name="sender">Either the map panel or one of the maps cells</param>
+        /// <param name="e">The MouseEventArgs</param>
+        /// <returns>A Point relative to the client coordinate system.</returns>
+        private Point GetCursorPosition(object sender, MouseEventArgs e) {
+            if (sender is PictureBox) {
+                return ((PictureBox)sender).Parent.PointToClient(Cursor.Position);
+            } else if (sender is Panel) {
+                return ((Panel)sender).PointToClient(Cursor.Position);
             }
-
-            // Add rows
-            for (int x = 0; x < map.Cells.Count(); x++) {
-                Object[] row = new Object[map.Cells.Count()];
-                for (int y = 0; y < map.Cells[x].Count(); y++) {
-                    row[y] = images[map.Cells[x][y].ImageId];
-                }
-                dataGridView1.Rows.Add(row);
-            }
+            return new Point(); ;
         }
 
-        private void ScrollableControl1_MouseDown(object sender, MouseEventArgs e) {
+        /// <summary>
+        /// Starts dragging the map.
+        /// </summary>
+        /// <param name="sender">Either the map panel or one of the maps cells</param>
+        /// <param name="e">The MouseEventArgs</param>
+        private void Map_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 isDragging = true;
-                lastDragPoint = e.Location;
+                lastDragPoint = GetCursorPosition(sender, e);
             }
         }
 
-        private void ScrollableControl1_MouseMove(object sender, MouseEventArgs e) {
+        /// <summary>
+        /// Called while the user drags the map. This function places the map cells to their new positions.
+        /// </summary>
+        /// <param name="sender">Either the map panel or one of the maps cells</param>
+        /// <param name="e">The MouseEventArgs</param>
+        private void Map_MouseMove(object sender, MouseEventArgs e) {
             if (isDragging) {
-                //this.Text = $"Dragging: {e.Location}";
-                dragOffset = new Point(e.Location.X - lastDragPoint.X, e.Location.Y - lastDragPoint.Y);
+                Point currentPos = GetCursorPosition(sender, e);
+                dragOffset = new Point(currentPos.X - lastDragPoint.X, currentPos.Y - lastDragPoint.Y);
                 picture.Location = new Point(picture.Location.X + dragOffset.X, picture.Location.Y + dragOffset.Y);
-                lastDragPoint = e.Location;
+                lastDragPoint = GetCursorPosition(sender, e);
             }
         }
 
-        private void ScrollableControl1_MouseUp(object sender, MouseEventArgs e) {
+        /// <summary>
+        /// Ends dragging the map.
+        /// </summary>
+        /// <param name="sender">Either the map panel or one of the maps cells</param>
+        /// <param name="e">The MouseEventArgs</param>
+        private void Map_MouseUp(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 isDragging = false;
-                //dragDirection = new Point(e.Location.X - dragStart.X, e.Location.Y - dragStart.Y);
-                //MessageBox.Show($"Drag direction: {dragDirection}");
             }
         }
 
