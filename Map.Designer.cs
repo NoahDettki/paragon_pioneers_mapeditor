@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.grid = new System.Windows.Forms.DataGridView();
-            this.mapPanel = new System.Windows.Forms.Panel();
+            this.mapPanel = new ParagonPioneers.MapPanel();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -57,7 +57,7 @@
             this.mapPanel.Location = new System.Drawing.Point(0, 0);
             this.mapPanel.Name = "mapPanel";
             this.mapPanel.Size = new System.Drawing.Size(800, 450);
-            this.mapPanel.TabIndex = 1;
+            this.mapPanel.TabIndex = 2;
             // 
             // Map
             // 
@@ -76,6 +76,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView grid;
-        private System.Windows.Forms.Panel mapPanel;
+        private MapPanel mapPanel;
     }
 }

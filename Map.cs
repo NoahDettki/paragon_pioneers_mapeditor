@@ -11,9 +11,6 @@ namespace ParagonPioneers
         private int[,] tiles;
         private const int IMAGE_SIZE = 16;
 
-        // Map tile pictures
-        PictureBox[,] mapPictures;
-
         // Dragging and zooming the map
         private bool isDragging = false;
         private Point lastDragPoint;
@@ -64,53 +61,25 @@ namespace ParagonPioneers
             // -- Panel settings end -----------------------------
 
             currentTileSize = IMAGE_SIZE * zoom;
-            PopulateGrid();
+            mapPanel.SetMapImages(PopulateGrid());
         }
 
-        private void PopulateGrid()
+        private Image[,] PopulateGrid()
         {
-            int rows = tiles.GetLength(0);
-            int cols = tiles.GetLength(1);
+            int cols = tiles.GetLength(0);
+            int rows = tiles.GetLength(1);
 
-            mapPictures = new PictureBox[rows, cols];
+            Image[,] mapImages = new Image[cols, rows];
 
             for (int col = 0; col < cols; col++)
             {
                 for (int row = 0; row < rows; row++)
                 {
-                    int tileId = tiles[row, col];
-                    mapPictures[col, row] = new PictureBox {
-                        Image = tileImages[tileId],
-                        SizeMode = PictureBoxSizeMode.StretchImage,
-                        Size = new Size((int)currentTileSize, (int)currentTileSize),
-                        Location = new Point((int)(col * currentTileSize), (int)(row * currentTileSize)),
-                    };
-
-                    mapPictures[col, row].MouseDown += Map_MouseDown;
-                    mapPictures[col, row].MouseMove += Map_MouseMove;
-                    mapPictures[col, row].MouseUp += Map_MouseUp;
-
-                    // Add the PictureBox to the panel
-                    mapPanel.Controls.Add(mapPictures[col, row]);
+                    int tileId = tiles[col, row];
+                    mapImages[col, row] = tileImages[tileId];
                 }
             }
-        }
-
-        /// <summary>
-        /// If the user clicks a PictureBox e will only contain the cursor position relative to itself,
-        /// while clicking the Panel results in the cursor position relative to the panel.
-        /// This funciton brings both points to screen positions so that they function the same.
-        /// </summary>
-        /// <param name="sender">Either the map panel or one of the maps cells</param>
-        /// <param name="e">The MouseEventArgs</param>
-        /// <returns>A Point relative to the client coordinate system.</returns>
-        private Point GetCursorPosition(object sender, MouseEventArgs e) {
-            if (sender is PictureBox) {
-                return ((PictureBox)sender).Parent.PointToScreen(Cursor.Position);
-            } else if (sender is Panel) {
-                return ((Panel)sender).PointToScreen(Cursor.Position);
-            }
-            return new Point(); ;
+            return mapImages;
         }
 
         /// <summary>
@@ -121,28 +90,22 @@ namespace ParagonPioneers
         private void Map_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 isDragging = true;
-                lastDragPoint = GetCursorPosition(sender, e);
+                lastDragPoint = e.Location;
             }
         }
 
         /// <summary>
-        /// Called while the user drags the map. This function places the map cells to their new positions.
+        /// Called while the user drags the map. This function updates the map position in the MapPanel.
         /// </summary>
         /// <param name="sender">Either the map panel or one of the maps cells</param>
         /// <param name="e">The MouseEventArgs</param>
         private void Map_MouseMove(object sender, MouseEventArgs e) {
             if (isDragging) {
-                Point currentPos = GetCursorPosition(sender, e);
+                Point currentPos = e.Location;
                 dragOffset = new Point(currentPos.X - lastDragPoint.X, currentPos.Y - lastDragPoint.Y);
+                mapPanel.MoveMap(dragOffset.X, dragOffset.Y);
 
-                // Move all PictureBoxes of the map
-                for (int col = 0; col < mapPictures.GetLength(0); col++) {
-                    for (int row = 0; row < mapPictures.GetLength(1); row++) {
-                        mapPictures[row, col].Location = new Point(mapPictures[row, col].Location.X + dragOffset.X, mapPictures[row, col].Location.Y + dragOffset.Y);
-                    }
-                }
-
-                lastDragPoint = GetCursorPosition(sender, e);
+                lastDragPoint = currentPos;
             }
         }
 
@@ -166,12 +129,12 @@ namespace ParagonPioneers
             }
         }
 
-        protected override CreateParams CreateParams {
-            get {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
-                return cp;
-            }
-        }
+        //protected override CreateParams CreateParams {
+        //    get {
+        //        CreateParams cp = base.CreateParams;
+        //        cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+        //        return cp;
+        //    }
+        //}
     }
 }
