@@ -106,9 +106,9 @@ namespace ParagonPioneers
         /// <returns>A Point relative to the client coordinate system.</returns>
         private Point GetCursorPosition(object sender, MouseEventArgs e) {
             if (sender is PictureBox) {
-                return ((PictureBox)sender).Parent.PointToClient(Cursor.Position);
+                return ((PictureBox)sender).Parent.PointToScreen(Cursor.Position);
             } else if (sender is Panel) {
-                return ((Panel)sender).PointToClient(Cursor.Position);
+                return ((Panel)sender).PointToScreen(Cursor.Position);
             }
             return new Point(); ;
         }
@@ -163,6 +163,14 @@ namespace ParagonPioneers
                 MessageBox.Show("Mouse wheel scrolled up!");
             } else if (e.Delta < 0) {
                 MessageBox.Show("Mouse wheel scrolled down!");
+            }
+        }
+
+        protected override CreateParams CreateParams {
+            get {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
             }
         }
     }
