@@ -25,10 +25,18 @@ namespace ParagonPioneers {
             this.Invalidate(); // Redraws the panel
         }
 
+        public void SetImageAt(Image image, int x, int y) {
+            if (x < 0 || y < 0 || x >= mapImages.GetLength(0) || y >= mapImages.GetLength(1)) {
+                Console.WriteLine("ERROR: The given coordinate is outside of mapImage's bounds");
+                return;
+            }
+            mapImages[x, y] = image;
+            this.Invalidate(); // Redraw the panel
+        }
+
         public void MoveMap(float dx, float dy) {
             mapOffset.X += dx;
             mapOffset.Y += dy;
-
             this.Invalidate(); // Redraw the panel
         }
 
