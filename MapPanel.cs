@@ -16,13 +16,13 @@ namespace ParagonPioneers {
 
         public MapPanel() {
             this.DoubleBuffered = true; // Prevents flickering
-            Zoom(3);
+            Zoom(3, new Point(0, 0));
             mapOffset = new PointF(0, 0);
         }
 
         public void SetMapImages(Image[,] images) {
             mapImages = images;
-            this.Invalidate(); // Redraws the panel
+            this.Invalidate();
         }
 
         public void SetImageAt(Image image, int x, int y) {
@@ -31,18 +31,31 @@ namespace ParagonPioneers {
                 return;
             }
             mapImages[x, y] = image;
-            this.Invalidate(); // Redraw the panel
+            this.Invalidate();
         }
 
         public void MoveMap(float dx, float dy) {
             mapOffset.X += dx;
             mapOffset.Y += dy;
-            this.Invalidate(); // Redraw the panel
+            this.Invalidate();
         }
 
-        public void Zoom(float factor) {
-            zoom = factor;
+        public void Zoom(float delta, Point mousePos) {
+            float oldZoomLevel = zoom;
+            zoom += delta;
+            if (zoom > 10f) {
+                zoom = 10f;
+            }
+            if (zoom < 0.5f) {
+                zoom = 0.5f;
+            }
             currentTileSize = TILE_SIZE * zoom;
+
+            // The offset is calculated to keep the mouse position at the same point on the map
+            mapOffset.X = (float)mousePos.X - zoom / oldZoomLevel* (float)(mousePos.X - mapOffset.X);
+            mapOffset.Y = (float)mousePos.Y - zoom / oldZoomLevel * (float)(mousePos.Y - mapOffset.Y);
+
+            this.Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e) {

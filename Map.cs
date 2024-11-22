@@ -12,11 +12,10 @@ namespace ParagonPioneers
         private const int IMAGE_SIZE = 16;
 
         // Dragging and zooming the map
+        private const float ZOOM_FACTOR = 0.005f;
         private bool isDragging = false;
         private Point lastDragPoint;
         private Point dragOffset;
-        private float zoom = 3;
-        private float currentTileSize;
 
         private readonly Dictionary<int, Image> tileImages = new Dictionary<int, Image>()
         {
@@ -60,7 +59,6 @@ namespace ParagonPioneers
 
             // -- Panel settings end -----------------------------
 
-            currentTileSize = IMAGE_SIZE * zoom;
             mapPanel.SetMapImages(PopulateGrid());
         }
 
@@ -122,10 +120,8 @@ namespace ParagonPioneers
 
         private void Map_MouseWheel(object sender, MouseEventArgs e) {
             // Custom behavior based on scroll direction
-            if (e.Delta > 0) {
-                MessageBox.Show("Mouse wheel scrolled up!");
-            } else if (e.Delta < 0) {
-                MessageBox.Show("Mouse wheel scrolled down!");
+            if (e.Delta != 0) {
+                mapPanel.Zoom(e.Delta * ZOOM_FACTOR, e.Location);
             }
         }
 
