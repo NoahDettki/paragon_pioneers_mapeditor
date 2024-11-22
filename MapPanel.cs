@@ -20,6 +20,16 @@ namespace ParagonPioneers {
             mapOffset = new PointF(0, 0);
         }
 
+        public Point? MouseToGrid(Point mousePos) {
+            Point gridPoint = new Point(
+                (int)((mousePos.X - mapOffset.X) / currentTileSize),
+                (int)((mousePos.Y - mapOffset.Y) / currentTileSize)
+            );
+            if (gridPoint.X < 0 || gridPoint.Y < 0 || gridPoint.X >= mapImages.GetLength(0) || gridPoint.Y >= mapImages.GetLength(1)) {
+                return null;
+            } else return gridPoint;
+        }
+
         public void SetMapImages(Image[,] images) {
             mapImages = images;
             this.Invalidate();
