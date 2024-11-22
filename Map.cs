@@ -17,6 +17,8 @@ namespace ParagonPioneers
         private Point lastDragPoint;
         private Point dragOffset;
 
+        private int selectedTile = 0;
+
         private readonly Dictionary<int, Image> tileImages = new Dictionary<int, Image>()
         {
             [0] = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Water.png")),
@@ -86,9 +88,16 @@ namespace ParagonPioneers
         /// <param name="sender">Either the map panel or one of the maps cells</param>
         /// <param name="e">The MouseEventArgs</param>
         private void Map_MouseDown(object sender, MouseEventArgs e) {
-            if (e.Button == MouseButtons.Left) {
+            if (e.Button == MouseButtons.Right) {
                 isDragging = true;
                 lastDragPoint = e.Location;
+            } else if (e.Button == MouseButtons.Left) {
+                Point? gridPos = mapPanel.MouseToGrid(e.Location);
+                
+                if (gridPos != null)
+                {
+                    mapPanel.SetImageAt(tileImages[selectedTile], gridPos.Value.X, gridPos.Value.Y);
+                }
             }
         }
 
@@ -113,7 +122,7 @@ namespace ParagonPioneers
         /// <param name="sender">Either the map panel or one of the maps cells</param>
         /// <param name="e">The MouseEventArgs</param>
         private void Map_MouseUp(object sender, MouseEventArgs e) {
-            if (e.Button == MouseButtons.Left) {
+            if (e.Button == MouseButtons.Right) {
                 isDragging = false;
             }
         }
@@ -123,6 +132,16 @@ namespace ParagonPioneers
             if (e.Delta != 0) {
                 mapPanel.Zoom(e.Delta * ZOOM_FACTOR, e.Location);
             }
+        }
+
+        private void waterButton_Click(object sender, EventArgs e)
+        {
+            selectedTile = 0;
+        }
+
+        private void landButton_Click(object sender, EventArgs e)
+        {
+            selectedTile = 1;
         }
 
         //protected override CreateParams CreateParams {

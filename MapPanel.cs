@@ -80,7 +80,7 @@ namespace ParagonPioneers {
                 for (int row = 0; row < mapImages.GetLength(1); row++) {
                     //TODO maybe switch row and col
                     e.Graphics.DrawImage(
-                        mapImages[row, col],
+                        mapImages[col, row],
                         col * currentTileSize + mapOffset.X,
                         row * currentTileSize + mapOffset.Y,
                         currentTileSize,
