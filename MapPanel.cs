@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +39,7 @@ namespace ParagonPioneers {
 
         public void SetImageAt(Image image, int x, int y) {
             if (x < 0 || y < 0 || x >= mapImages.GetLength(0) || y >= mapImages.GetLength(1)) {
-                Console.WriteLine("ERROR: The given coordinate is outside of mapImage's bounds");
+                Console.WriteLine($"ERROR: Can't SetImageAt({x}|{y}). The given coordinate is outside of mapImage's bounds!");
                 return;
             }
             mapImages[x, y] = image;
@@ -76,15 +78,32 @@ namespace ParagonPioneers {
                 return;
             }
 
+            e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            var attributes = new ImageAttributes();
+            attributes.SetWrapMode(WrapMode.TileFlipXY);
+
             for (int col = 0; col < mapImages.GetLength(0); col++) {
                 for (int row = 0; row < mapImages.GetLength(1); row++) {
                     //TODO maybe switch row and col
                     e.Graphics.DrawImage(
                         mapImages[col, row],
-                        col * currentTileSize + mapOffset.X,
-                        row * currentTileSize + mapOffset.Y,
-                        currentTileSize,
-                        currentTileSize
+                        new Rectangle(
+                            (int)(col * currentTileSize + mapOffset.X), 
+                            (int)(row * currentTileSize + mapOffset.Y),
+                            (int)currentTileSize, 
+                            (int)currentTileSize
+                        ),
+                        0,
+                        0,
+                        //(col * currentTileSize + mapOffset.X),
+                        //(row * currentTileSize + mapOffset.Y),
+                        //currentTileSize,
+                        //currentTileSize,
+                        mapImages[col, row].Width,
+                        mapImages[col, row].Height,
+                        GraphicsUnit.Pixel,
+                        attributes
                     );
                 }
             }

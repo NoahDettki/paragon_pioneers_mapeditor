@@ -19,10 +19,51 @@ namespace ParagonPioneers
 
         private int selectedTile = 0;
 
-        private readonly Dictionary<int, Image> tileImages = new Dictionary<int, Image>()
+        private readonly Dictionary<int, Image> tileImagesOld = new Dictionary<int, Image>()
         {
             [0] = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Water.png")),
             [1] = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land.png")),
+        };
+
+        private readonly Dictionary<int, Image[]> tileImages = new Dictionary<int, Image[]>() {
+            [0] = new []
+            { 
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+            },
+            [1] = new[]
+            {
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land____.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandT___.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land_B__.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandTB__.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land__L_.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandT_L_.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land_BL_.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandTBL_.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land___R.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandT__R.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land_B_R.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandTB_R.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land__LR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandT_LR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land_BLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandTBLR.png")),
+            }
         };
 
         public Map(int[,] tiles)
@@ -75,11 +116,28 @@ namespace ParagonPioneers
             {
                 for (int row = 0; row < rows; row++)
                 {
-                    int tileId = tiles[col, row];
-                    mapImages[col, row] = tileImages[tileId];
+                    //int tileId = tiles[col, row];
+                    mapImages[col, row] = getDependendImage(col, row);
                 }
             }
             return mapImages;
+        }
+
+        private Image getDependendImage(int x, int y) {
+            int type = tiles[x, y];
+            // Get the surrounding tiles' types. Border is indicated by -1.
+            int typeTop = y > 0 ? tiles[x, y - 1] : -1;
+            int typeBottom = y < tiles.GetLength(1) - 1 ? tiles[x, y + 1] : -1;
+            int typeLeft = x > 0 ? tiles[x - 1, y] : -1;
+            int typeRight = x < tiles.GetLength(0) - 1 ? tiles[x + 1, y] : -1;
+
+            // Return image based on type and surrounding tiles
+            int index = 0;
+            index += typeTop == type ? 1 : 0;
+            index += typeBottom == type ? 2 : 0;
+            index += typeLeft == type ? 4 : 0;
+            index += typeRight == type ? 8 : 0;
+            return tileImages[type][index];
         }
 
         /// <summary>
@@ -96,7 +154,22 @@ namespace ParagonPioneers
                 
                 if (gridPos != null)
                 {
-                    mapPanel.SetImageAt(tileImages[selectedTile], gridPos.Value.X, gridPos.Value.Y);
+                    tiles[gridPos.Value.X, gridPos.Value.Y] = selectedTile;
+                    mapPanel.SetImageAt(getDependendImage(gridPos.Value.X, gridPos.Value.Y), gridPos.Value.X, gridPos.Value.Y);
+
+                    // Update surrounding tiles
+                    if (gridPos.Value.X > 0) {
+                        mapPanel.SetImageAt(getDependendImage(gridPos.Value.X - 1, gridPos.Value.Y), gridPos.Value.X - 1, gridPos.Value.Y);
+                    }
+                    if (gridPos.Value.X < tiles.GetLength(0) - 1) {
+                        mapPanel.SetImageAt(getDependendImage(gridPos.Value.X + 1, gridPos.Value.Y), gridPos.Value.X + 1, gridPos.Value.Y);
+                    }
+                    if (gridPos.Value.Y > 0) {
+                        mapPanel.SetImageAt(getDependendImage(gridPos.Value.X, gridPos.Value.Y - 1), gridPos.Value.X, gridPos.Value.Y - 1);
+                    }
+                    if (gridPos.Value.Y < tiles.GetLength(1) - 1) {
+                        mapPanel.SetImageAt(getDependendImage(gridPos.Value.X, gridPos.Value.Y + 1), gridPos.Value.X, gridPos.Value.Y + 1);
+                    }
                 }
             }
         }
