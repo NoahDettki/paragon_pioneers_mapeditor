@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -215,6 +216,48 @@ namespace ParagonPioneers
         private void landButton_Click(object sender, EventArgs e)
         {
             selectedTile = 1;
+        }
+
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                // Configure the dialog
+                saveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+                saveFileDialog.DefaultExt = "txt";
+                saveFileDialog.Title = "Save File As";
+                saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Get the selected file path
+                    string filePath = saveFileDialog.FileName;
+
+                    try
+                    {
+                        //formatting for visibility
+                        string formatedTiles = JsonConvert.SerializeObject(tiles)
+                            .Replace("],", "]," + Environment.NewLine)
+                            .Replace("[[", "[" + Environment.NewLine + "[")
+                            .Replace("]]", "]" + Environment.NewLine + "]");
+
+                        // Write the content to the file
+                        File.WriteAllText(filePath, formatedTiles);
+
+                        // Notify the user
+                        DialogResult result = MessageBox.Show($"File successfully saved to:\n{filePath}", "Export Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (result == DialogResult.OK)
+                        {
+                            Application.Exit();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle errors
+                        MessageBox.Show($"Error saving file:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
 
         //protected override CreateParams CreateParams {
