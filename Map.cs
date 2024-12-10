@@ -19,50 +19,44 @@ namespace ParagonPioneers
 
         private int selectedTile = 0;
 
-        private readonly Dictionary<int, Image> tileImagesOld = new Dictionary<int, Image>()
-        {
-            [0] = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Water.png")),
-            [1] = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land.png")),
-        };
-
         private readonly Dictionary<int, Image[]> tileImages = new Dictionary<int, Image[]>() {
             [0] = new []
             { 
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
             },
             [1] = new[]
             {
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land____.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandT___.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land_B__.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandTB__.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land__L_.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandT_L_.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land_BL_.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandTBL_.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land___R.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandT__R.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land_B_R.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandTB_R.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land__LR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandT_LR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "Land_BLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "Images", "LandTBLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land____.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandT___.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land_B__.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandTB__.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land__L_.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandT_L_.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land_BL_.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandTBL_.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land___R.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandT__R.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land_B_R.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandTB_R.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land__LR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandT_LR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land_BLR.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandTBLR.png")),
             }
         };
 
