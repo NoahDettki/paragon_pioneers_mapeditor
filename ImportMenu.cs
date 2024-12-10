@@ -41,8 +41,13 @@ namespace ParagonPioneers {
             if (IsValidJson(json))
             {
                 int[,] jsonArray = JsonConvert.DeserializeObject<int[,]>(@json);
+
                 //show map form and pass the validated array
-                (new Map(jsonArray)).Show();
+                Map map = new Map(jsonArray);
+                map.Show();
+
+                //hides import menu
+                this.Hide();
             }
             else
             {
