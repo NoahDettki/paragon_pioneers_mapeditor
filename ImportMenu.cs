@@ -48,11 +48,18 @@ namespace ParagonPioneers {
 
                 //hides import menu
                 this.Hide();
+
+                map.FormClosed += ShowImportMenu;
             }
             else
             {
                 MessageBox.Show("Your JSON is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void ShowImportMenu(object sender, FormClosedEventArgs e)
+        {
+            this.Show();
         }
 
         private bool IsValidJson(string json)

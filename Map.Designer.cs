@@ -30,9 +30,10 @@
         {
             this.mapPanel = new ParagonPioneers.MapPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.treeButton = new System.Windows.Forms.Button();
+            this.exportButton = new System.Windows.Forms.Button();
             this.landButton = new System.Windows.Forms.Button();
             this.waterButton = new System.Windows.Forms.Button();
-            this.exportButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -40,6 +41,7 @@
             // 
             this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapPanel.Location = new System.Drawing.Point(0, 0);
+            this.mapPanel.Margin = new System.Windows.Forms.Padding(0);
             this.mapPanel.Name = "mapPanel";
             this.mapPanel.Size = new System.Drawing.Size(800, 450);
             this.mapPanel.TabIndex = 2;
@@ -49,6 +51,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.treeButton);
             this.panel1.Controls.Add(this.exportButton);
             this.panel1.Controls.Add(this.landButton);
             this.panel1.Controls.Add(this.waterButton);
@@ -56,6 +59,30 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(60, 426);
             this.panel1.TabIndex = 1;
+            // 
+            // treeButton
+            // 
+            this.treeButton.BackColor = System.Drawing.Color.ForestGreen;
+            this.treeButton.ForeColor = System.Drawing.Color.White;
+            this.treeButton.Location = new System.Drawing.Point(5, 115);
+            this.treeButton.Name = "treeButton";
+            this.treeButton.Size = new System.Drawing.Size(50, 50);
+            this.treeButton.TabIndex = 3;
+            this.treeButton.Text = "Tree";
+            this.treeButton.UseVisualStyleBackColor = false;
+            this.treeButton.Click += new System.EventHandler(this.treeButton_Click);
+            // 
+            // exportButton
+            // 
+            this.exportButton.BackColor = System.Drawing.Color.Red;
+            this.exportButton.ForeColor = System.Drawing.Color.White;
+            this.exportButton.Location = new System.Drawing.Point(4, 371);
+            this.exportButton.Name = "exportButton";
+            this.exportButton.Size = new System.Drawing.Size(50, 50);
+            this.exportButton.TabIndex = 2;
+            this.exportButton.Text = "Export";
+            this.exportButton.UseVisualStyleBackColor = false;
+            this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
             // 
             // landButton
             // 
@@ -81,18 +108,6 @@
             this.waterButton.UseVisualStyleBackColor = false;
             this.waterButton.Click += new System.EventHandler(this.waterButton_Click);
             // 
-            // exportButton
-            // 
-            this.exportButton.BackColor = System.Drawing.Color.Red;
-            this.exportButton.ForeColor = System.Drawing.Color.White;
-            this.exportButton.Location = new System.Drawing.Point(4, 371);
-            this.exportButton.Name = "exportButton";
-            this.exportButton.Size = new System.Drawing.Size(50, 50);
-            this.exportButton.TabIndex = 2;
-            this.exportButton.Text = "Export";
-            this.exportButton.UseVisualStyleBackColor = false;
-            this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
-            // 
             // Map
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -113,5 +128,6 @@
         private System.Windows.Forms.Button waterButton;
         private System.Windows.Forms.Button landButton;
         private System.Windows.Forms.Button exportButton;
+        private System.Windows.Forms.Button treeButton;
     }
 }

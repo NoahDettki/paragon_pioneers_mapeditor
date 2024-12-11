@@ -24,23 +24,8 @@ namespace ParagonPioneers
             [0] = new []
             { 
                 Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
             },
-            [1] = new[]
+            [1] = new []
             {
                 Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land____.png")),
                 Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandT___.png")),
@@ -58,6 +43,12 @@ namespace ParagonPioneers
                 Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandT_LR.png")),
                 Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Land_BLR.png")),
                 Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandTBLR.png")),
+            },
+            [2] = new []
+            {
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Tree.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Tree2.png")),
+                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Tree3.png"))
             }
         };
 
@@ -120,6 +111,12 @@ namespace ParagonPioneers
 
         private Image getDependendImage(int x, int y) {
             int type = tiles[x, y];
+
+            if (type == 0)
+            {
+                return tileImages[type][0];
+            }
+
             // Get the surrounding tiles' types. Border is indicated by -1.
             int typeTop = y > 0 ? tiles[x, y - 1] : -1;
             int typeBottom = y < tiles.GetLength(1) - 1 ? tiles[x, y + 1] : -1;
@@ -212,6 +209,11 @@ namespace ParagonPioneers
             selectedTile = 1;
         }
 
+        private void treeButton_Click(object sender, EventArgs e)
+        {
+            selectedTile = 2;
+        }
+
         private void exportButton_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
@@ -253,13 +255,5 @@ namespace ParagonPioneers
                 }
             }
         }
-
-        //protected override CreateParams CreateParams {
-        //    get {
-        //        CreateParams cp = base.CreateParams;
-        //        cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
-        //        return cp;
-        //    }
-        //}
     }
 }

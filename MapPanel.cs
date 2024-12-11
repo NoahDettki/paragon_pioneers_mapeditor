@@ -46,6 +46,16 @@ namespace ParagonPioneers {
             this.Invalidate();
         }
 
+        public Image GetImageAt(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= mapImages.GetLength(0) || y >= mapImages.GetLength(1))
+            {
+                Console.WriteLine($"ERROR: Can't GetImageAt({x}|{y}). The given coordinate is outside of mapImage's bounds!");
+                return null;
+            }
+            return mapImages[x, y];
+        }
+
         public void MoveMap(float dx, float dy) {
             mapOffset.X += dx;
             mapOffset.Y += dy;
@@ -80,6 +90,8 @@ namespace ParagonPioneers {
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.None;
+
             var attributes = new ImageAttributes();
             attributes.SetWrapMode(WrapMode.TileFlipXY);
 
@@ -89,10 +101,10 @@ namespace ParagonPioneers {
                     e.Graphics.DrawImage(
                         mapImages[col, row],
                         new Rectangle(
-                            (int)(col * currentTileSize + mapOffset.X), 
-                            (int)(row * currentTileSize + mapOffset.Y),
-                            (int)currentTileSize, 
-                            (int)currentTileSize
+                            (int)Math.Floor(col * currentTileSize + mapOffset.X), 
+                            (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                            (int)Math.Ceiling(currentTileSize), 
+                            (int)Math.Ceiling(currentTileSize)
                         ),
                         0,
                         0,
