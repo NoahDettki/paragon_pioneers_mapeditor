@@ -83,7 +83,7 @@ namespace ParagonPioneers {
         protected override void OnPaint(PaintEventArgs e) {
             base.OnPaint(e);
 
-            // This is important especially for the editor view, because the images array will be empty at that point
+            // This is important especially for the [Design] view, because the images array will be empty at that point
             if (mapImages == null) {
                 return;
             }
