@@ -56,9 +56,19 @@ namespace ParagonPioneers {
             return mapImages[x, y];
         }
 
-        public void MoveMap(float dx, float dy) {
-            mapOffset.X += dx;
-            mapOffset.Y += dy;
+        public void MoveMap(float dx, float dy)
+        {
+            float mapImageWidth = mapImages.GetLength(0) * TILE_SIZE * zoom;
+            float mapImageHeight = mapImages.GetLength(1) * TILE_SIZE * zoom;
+            //determines how much map at least has to be visible
+            float gap = TILE_SIZE * zoom;
+
+            // Clamps X offset
+            mapOffset.X = Math.Max(Math.Min(mapOffset.X + dx, this.Width - gap), 0 - mapImageWidth + gap);
+
+            // Clamp Y offset
+            mapOffset.Y = Math.Max(Math.Min(mapOffset.Y + dy, this.Height - gap), 0 - mapImageHeight + gap);
+
             this.Invalidate();
         }
 
