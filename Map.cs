@@ -10,68 +10,85 @@ namespace ParagonPioneers
     public partial class Map : Form
     {
         private int[,] tiles;
-        private const int IMAGE_SIZE = 16;
+        private Tile[,] tileGrid;
+        private const int SPRITE_SIZE = 128;
 
         // Dragging and zooming the map
-        private const float ZOOM_FACTOR = 0.005f;
+        private const float ZOOM_FACTOR = 0.0005f;
         private bool isDragging = false;
         private Point lastDragPoint;
         private Point dragOffset;
 
         private int selectedTile = 0;
 
-        private Image missingImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Missing.png"));
+        private Image mapErrorImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "MapError.jpg"));
+        private Image tileSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Background_Tiles.png"));
 
-        private readonly Dictionary<int, Image[]> tileImages = new Dictionary<int, Image[]>() {
-            [0] = new []
-            {
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water____.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterT___.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water_B__.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTB__.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water__L_.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterT_L_.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water_BL_.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBL_.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water___R.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterT__R.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water_B_R.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTB_R.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water__LR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterT_LR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water_BLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "WaterTBLR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water-TL.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water-TR.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water-BL.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Water-BR.png")),
-
-
-
+        // This dictionary contains the coordinates that a specific sprite has on the sprite sheet. It is sorted by the tile type.
+        // A point of (-1, -1) indicates that the sprite is not available.
+        private readonly Dictionary<Tile.Type, Point[]> spritesheetCoordinates = new Dictionary<Tile.Type, Point[]>() {
+            // Water sprites
+            [Tile.Type.Water] = new[] {
+                new Point(1, 6),    // ____
+                new Point(1, 5),    // T___
+                new Point(1, 7),    // _B__
+                new Point(-1, -1),  // TB__
+                new Point(0, 6),    // __L_
+                new Point(0, 5),    // T_L_
+                new Point(0, 7),    // _BL_
+                new Point(-1, -1),  // TBL_
+                new Point(2, 6),    // ___R
+                new Point(2, 5),    // T__R
+                new Point(2, 7),    // _B_R
+                new Point(-1, -1),  // TB_R
+                new Point(-1, -1),  // __LR
+                new Point(-1, -1),  // T_LR
+                new Point(-1, -1),  // _BLR
+                new Point(-1, -1),  // TBLR
+                new Point(5, 7),    // Diagonal top left
+                new Point(4, 7),    // Diagonal top right
+                new Point(5, 6),    // Diagonal bottom left
+                new Point(4, 6),    // Diagonal bottom right
             },
-            [1] = new []
-            {
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "LandTBLR.png")),
+            // Coast sprites
+            [Tile.Type.Coast] = new[] {
+                new Point(1, 3),    // ____
+                new Point(1, 2),    // T___
+                new Point(1, 4),    // _B__
+                new Point(-1, -1),  // TB__
+                new Point(0, 3),    // __L_
+                new Point(0, 2),    // T_L_
+                new Point(0, 4),    // _BL_
+                new Point(-1, -1),  // TBL_
+                new Point(2, 3),    // ___R
+                new Point(2, 2),    // T__R
+                new Point(2, 4),    // _B_R
+                new Point(-1, -1),  // TB_R
+                new Point(-1, -1),  // __LR
+                new Point(-1, -1),  // T_LR
+                new Point(-1, -1),  // _BLR
+                new Point(-1, -1),  // TBLR
+                new Point(4, 3),    // Diagonal top left
+                new Point(3, 3),    // Diagonal top right
+                new Point(4, 2),    // Diagonal bottom left
+                new Point(3, 2),    // Diagonal bottom right
             },
-            [2] = new []
-            {
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Tree.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Tree2.png")),
-                Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Tree3.png"))
-            }
+            // Land sprites
+            [Tile.Type.Land] = new[] {
+                new Point(1, 1),
+            },
+
         };
 
-        public Map(int[,] tiles)
-        {
+        public Map(int[,] tiles) {
             this.tiles = tiles;
+            tileGrid = new Tile[tiles.GetLength(0), tiles.GetLength(1)];
 
             InitializeComponent();
-
             Init();
         }
 
-        private void Init()
-        {
+        private void Init() {
             // Window header
             this.Text = "Tile Grid";
 
@@ -97,26 +114,26 @@ namespace ParagonPioneers
 
             // -- Panel settings end -----------------------------
 
-            mapPanel.SetMapImages(PopulateGrid());
+            PopulateGrid();
+            mapPanel.Initialize(tileSpritesheet, SPRITE_SIZE, tileGrid, mapErrorImage);
         }
 
-        private Image[,] PopulateGrid()
-        {
+        private void PopulateGrid() {
             int cols = tiles.GetLength(0);
             int rows = tiles.GetLength(1);
 
-            Image[,] mapImages = new Image[cols, rows];
-
-            for (int col = 0; col < cols; col++)
-            {
-                for (int row = 0; row < rows; row++)
-                {
-                    //int tileId = tiles[col, row];
-                    mapImages[col, row] = GetDependendImage(col, row);
+            for (int col = 0; col < cols; col++) {
+                for (int row = 0; row < rows; row++) {
+                    tileGrid[col, row] = new Tile(tiles[col, row] == 0 ? Tile.Type.Water : Tile.Type.Land);
                 }
             }
-            return mapImages;
+            for (int col = 0; col < cols; col++) {
+                for (int row = 0; row < rows; row++) {
+                    CalculateImageCoordinate(col, row);
+                }
+            }
         }
+
 
         /// <summary>
         /// Checks wether the specified coordinate is in the bounds of the tile map.
@@ -138,68 +155,72 @@ namespace ParagonPioneers
         /// <param name="y">the y coordinate</param>
         /// <param name="type">the tile type to compare with</param>
         /// <returns></returns>
-        private bool IsTypeAt(int x, int y, int type) {
+        private bool IsTypeAt(int x, int y, Tile.Type type) {
             // Check for out of bounds
             if (!IsInbounds(x, y)) return true;
 
             // Compare type
-            return tiles[x, y] == type;
+            return tileGrid[x, y].GetTileType() == type;
         }
 
-        private Image GetDependendImage(int x, int y) {
-            if (!IsInbounds(x, y)) return missingImage;
+        private void CalculateImageCoordinate(int x, int y) {
+            // Check for out of bounds
+            if (!IsInbounds(x, y)) return;
 
-            int type = tiles[x, y];
+            Tile.Type type = tileGrid[x, y].GetTileType();
 
-            if (type != 0)
-            {
-                return tileImages[type][0];
+            // At the moment there is only one available land sprite
+            if (type != Tile.Type.Water) {
+                tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][0]);
+                return;
             }
 
             // Handling water tiles
-            if (type == 0) {
+            if (type == Tile.Type.Water) {
                 // Are the neighbouring tiles land tiles?
-                bool top = IsInbounds(x, y - 1) && tiles[x, y - 1] != 0;
-                bool bottom = IsInbounds(x, y + 1) && tiles[x, y + 1] != 0;
-                bool left = IsInbounds(x - 1, y) && tiles[x - 1, y] != 0;
-                bool right = IsInbounds(x + 1, y) && tiles[x + 1, y] != 0;
+                bool top = IsInbounds(x, y - 1) && tileGrid[x, y - 1].GetTileType() != Tile.Type.Water;
+                bool bottom = IsInbounds(x, y + 1) && tileGrid[x, y + 1].GetTileType() != Tile.Type.Water;
+                bool left = IsInbounds(x - 1, y) && tileGrid[x - 1, y].GetTileType() != Tile.Type.Water;
+                bool right = IsInbounds(x + 1, y) && tileGrid[x + 1, y].GetTileType() != Tile.Type.Water;
 
-                bool topLeft = IsInbounds(x - 1, y - 1) && tiles[x - 1, y - 1] != 0;
-                bool topRight = IsInbounds(x + 1, y - 1) && tiles[x + 1, y - 1] != 0;
-                bool bottomLeft = IsInbounds(x - 1, y + 1) && tiles[x - 1, y + 1] != 0;
-                bool bottomRight = IsInbounds(x + 1, y + 1) && tiles[x + 1, y + 1] != 0;
+                bool topLeft = IsInbounds(x - 1, y - 1) && tileGrid[x - 1, y - 1].GetTileType() != Tile.Type.Water;
+                bool topRight = IsInbounds(x + 1, y - 1) && tileGrid[x + 1, y - 1].GetTileType() != Tile.Type.Water;
+                bool bottomLeft = IsInbounds(x - 1, y + 1) && tileGrid[x - 1, y + 1].GetTileType() != Tile.Type.Water;
+                bool bottomRight = IsInbounds(x + 1, y + 1) && tileGrid[x + 1, y + 1].GetTileType() != Tile.Type.Water;
 
-                // Return water image based on neighbouring tiles
+                // Return water sprite coordinate based on neighbouring tiles
                 int index = 0;
                 index += top ? 1 : 0;
                 index += bottom ? 2 : 0;
                 index += left ? 4 : 0;
                 index += right ? 8 : 0;
-                
+
+                // There are four extra sprites for water tiles with diagonal neihbouring land tiles
                 if (index == 0) {
-                    if (topLeft) return tileImages[type][16];
-                    if (topRight) return tileImages[type][17];
-                    if (bottomLeft) return tileImages[type][18];
-                    if (bottomRight) return tileImages[type][19];
+                    Console.WriteLine("Water tile");
+                    if (topLeft) {
+                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][16]);
+                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][16]);
+                    } else if (topRight) {
+                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][17]);
+                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][17]);
+                    } else if (bottomLeft) {
+                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][18]);
+                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][18]);
+                    } else if (bottomRight) {
+                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][19]);
+                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][19]);
+                    } else {
+                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][0]);
+                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][0]);
+                    }
+                } else {
+                    tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][index]);
+                    tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][index]);
                 }
-
-                return tileImages[type][index];
             }
-
-            //// Get the surrounding tiles' types. Border is indicated by -1.
-            //int typeTop = y > 0 ? tiles[x, y - 1] : -1;
-            //int typeBottom = y < tiles.GetLength(1) - 1 ? tiles[x, y + 1] : -1;
-            //int typeLeft = x > 0 ? tiles[x - 1, y] : -1;
-            //int typeRight = x < tiles.GetLength(0) - 1 ? tiles[x + 1, y] : -1;
-
-            //// Return image based on type and surrounding tiles
-            //int index = 0;
-            //index += typeTop == type ? 1 : 0;
-            //index += typeBottom == type ? 2 : 0;
-            //index += typeLeft == type ? 4 : 0;
-            //index += typeRight == type ? 8 : 0;
-            return tileImages[type][0];
         }
+
 
         /// <summary>
         /// Starts dragging the map.
@@ -218,25 +239,24 @@ namespace ParagonPioneers
                     int x = gridPos.Value.X;
                     int y = gridPos.Value.Y;
 
-                    if (selectedTile == 0) {
-                        // Rules for water placement
-                        if (!IsTypeAt(x + 1, y, 0) && !IsTypeAt(x - 1, y, 0)) return;
-                        if (!IsTypeAt(x, y + 1, 0) && !IsTypeAt(x, y - 1, 0)) return;
-                    }
-
-                    tiles[gridPos.Value.X, gridPos.Value.Y] = selectedTile;
-                    mapPanel.SetImageAt(GetDependendImage(x, y), x, y);
+                    tiles[x, y] = selectedTile;
+                    tileGrid[x, y].SetTileType(selectedTile == 0 ? Tile.Type.Water : Tile.Type.Land);
+                    CalculateImageCoordinate(x, y);
 
                     // Update surrounding tiles
-                    mapPanel.SetImageAt(GetDependendImage(gridPos.Value.X - 1, gridPos.Value.Y), gridPos.Value.X - 1, gridPos.Value.Y);
-                    mapPanel.SetImageAt(GetDependendImage(gridPos.Value.X + 1, gridPos.Value.Y), gridPos.Value.X + 1, gridPos.Value.Y);
-                    mapPanel.SetImageAt(GetDependendImage(gridPos.Value.X, gridPos.Value.Y - 1), gridPos.Value.X, gridPos.Value.Y - 1);
-                    mapPanel.SetImageAt(GetDependendImage(gridPos.Value.X, gridPos.Value.Y + 1), gridPos.Value.X, gridPos.Value.Y + 1);
+                    // Orthogonal neighbours
+                    CalculateImageCoordinate(x - 1, y);
+                    CalculateImageCoordinate(x + 1, y);
+                    CalculateImageCoordinate(x, y - 1);
+                    CalculateImageCoordinate(x, y + 1);
+                    // Diagonal neighbours
+                    CalculateImageCoordinate(x - 1, y - 1);
+                    CalculateImageCoordinate(x - 1, y + 1);
+                    CalculateImageCoordinate(x + 1, y - 1);
+                    CalculateImageCoordinate(x + 1, y + 1);
 
-                    mapPanel.SetImageAt(GetDependendImage(gridPos.Value.X - 1, gridPos.Value.Y - 1), gridPos.Value.X - 1, gridPos.Value.Y - 1);
-                    mapPanel.SetImageAt(GetDependendImage(gridPos.Value.X - 1, gridPos.Value.Y + 1), gridPos.Value.X - 1, gridPos.Value.Y + 1);
-                    mapPanel.SetImageAt(GetDependendImage(gridPos.Value.X + 1, gridPos.Value.Y - 1), gridPos.Value.X + 1, gridPos.Value.Y - 1);
-                    mapPanel.SetImageAt(GetDependendImage(gridPos.Value.X + 1, gridPos.Value.Y + 1), gridPos.Value.X + 1, gridPos.Value.Y + 1);
+                    // The panel has to be drawn again to show the changes
+                    mapPanel.Invalidate();
                 }
             }
         }

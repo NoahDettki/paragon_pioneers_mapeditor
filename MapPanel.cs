@@ -10,16 +10,28 @@ using System.Windows.Forms;
 
 namespace ParagonPioneers {
     internal class MapPanel : Panel{
-        private Image[,] mapImages;
-        private readonly int TILE_SIZE = 16;
+        private Image spriteSheet;
+        private Image mapErrorImage;
+        private int tileSize;
+        private Tile[,] tileGrid;
         private float zoom;
         private float currentTileSize;
         private PointF mapOffset;
+        private bool isInitialized = false;
 
         public MapPanel() {
             this.DoubleBuffered = true; // Prevents flickering
-            Zoom(3, new Point(0, 0));
+        }
+
+        public void Initialize(Image spriteSheet, int tileSize, Tile[,] tileGrid, Image mapError) {
+            this.spriteSheet = spriteSheet;
+            this.tileSize = tileSize;
+            this.tileGrid = tileGrid;
+            this.mapErrorImage = mapError;
+            zoom = 0.1f;
+            currentTileSize = tileSize * zoom;
             mapOffset = new PointF(0, 0);
+            isInitialized = true;
         }
 
         public Point? MouseToGrid(Point mousePos) {
@@ -27,41 +39,32 @@ namespace ParagonPioneers {
                 (int)((mousePos.X - mapOffset.X) / currentTileSize),
                 (int)((mousePos.Y - mapOffset.Y) / currentTileSize)
             );
-            if (gridPoint.X < 0 || gridPoint.Y < 0 || gridPoint.X >= mapImages.GetLength(0) || gridPoint.Y >= mapImages.GetLength(1)) {
+            if (gridPoint.X < 0 || gridPoint.Y < 0 || gridPoint.X >= tileGrid.GetLength(0) || gridPoint.Y >= tileGrid.GetLength(1)) {
                 return null;
             } else return gridPoint;
         }
 
-        public void SetMapImages(Image[,] images) {
-            mapImages = images;
+        public void SetTileGrid(Tile[,] grid) {
+            tileGrid = grid;
             this.Invalidate();
         }
 
-        public void SetImageAt(Image image, int x, int y) {
-            if (x < 0 || y < 0 || x >= mapImages.GetLength(0) || y >= mapImages.GetLength(1)) {
-                Console.WriteLine($"ERROR: Can't SetImageAt({x}|{y}). The given coordinate is outside of mapImage's bounds!");
-                return;
-            }
-            mapImages[x, y] = image;
+        public void SetSpriteSheet(Image spriteSheet) {
+            this.spriteSheet = spriteSheet;
             this.Invalidate();
         }
 
-        public Image GetImageAt(int x, int y)
-        {
-            if (x < 0 || y < 0 || x >= mapImages.GetLength(0) || y >= mapImages.GetLength(1))
-            {
-                Console.WriteLine($"ERROR: Can't GetImageAt({x}|{y}). The given coordinate is outside of mapImage's bounds!");
-                return null;
-            }
-            return mapImages[x, y];
+        public void SetTileSize(int size) {
+            tileSize = size;
+            this.Invalidate();
         }
 
         public void MoveMap(float dx, float dy)
         {
-            float mapImageWidth = mapImages.GetLength(0) * TILE_SIZE * zoom;
-            float mapImageHeight = mapImages.GetLength(1) * TILE_SIZE * zoom;
+            float mapImageWidth = tileGrid.GetLength(0) * tileSize * zoom;
+            float mapImageHeight = tileGrid.GetLength(1) * tileSize * zoom;
             //determines how much map at least has to be visible
-            float gap = TILE_SIZE * zoom;
+            float gap = tileSize * zoom;
 
             // Clamps X offset
             mapOffset.X = Math.Max(Math.Min(mapOffset.X + dx, this.Width - gap), 0 - mapImageWidth + gap);
@@ -75,13 +78,13 @@ namespace ParagonPioneers {
         public void Zoom(float delta, Point mousePos) {
             float oldZoomLevel = zoom;
             zoom += delta;
-            if (zoom > 10f) {
-                zoom = 10f;
+            if (zoom > 5f) {
+                zoom = 5f;
             }
-            if (zoom < 0.5f) {
-                zoom = 0.5f;
+            if (zoom < 0.1f) {
+                zoom = 0.1f;
             }
-            currentTileSize = TILE_SIZE * zoom;
+            currentTileSize = tileSize * zoom;
 
             // The offset is calculated to keep the mouse position at the same point on the map
             mapOffset.X = (float)mousePos.X - zoom / oldZoomLevel* (float)(mousePos.X - mapOffset.X);
@@ -94,7 +97,7 @@ namespace ParagonPioneers {
             base.OnPaint(e);
 
             // This is important especially for the [Design] view, because the images array will be empty at that point
-            if (mapImages == null) {
+            if (isInitialized == false) {
                 return;
             }
 
@@ -105,25 +108,71 @@ namespace ParagonPioneers {
             var attributes = new ImageAttributes();
             attributes.SetWrapMode(WrapMode.TileFlipXY);
 
-            for (int col = 0; col < mapImages.GetLength(0); col++) {
-                for (int row = 0; row < mapImages.GetLength(1); row++) {
+            // Draw every tile
+            Point p;
+            for (int col = 0; col < tileGrid.GetLength(0); col++) {
+                for (int row = 0; row < tileGrid.GetLength(1); row++) {
                     //TODO maybe switch row and col
+
+                    if (tileGrid[col, row].GetSpritesheetCoordinate().X == -1) {
+                        e.Graphics.DrawImage(
+                            mapErrorImage,
+                            new Rectangle(
+                                (int)Math.Floor(col * currentTileSize + mapOffset.X),
+                                (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                                (int)Math.Ceiling(currentTileSize),
+                                (int)Math.Ceiling(currentTileSize)
+                            ),
+                            0,
+                            0,
+                            mapErrorImage.Width,
+                            mapErrorImage.Height,
+                            GraphicsUnit.Pixel,
+                            attributes
+                        );
+                        continue;
+                    }
+
+                    // Water tiles have an additional background layer
+                    if (tileGrid[col, row].GetTileType() == Tile.Type.Water) {
+                        p = tileGrid[col, row].GetBackgroundCoordinate();
+
+                        e.Graphics.DrawImage(
+                            spriteSheet,
+                            new Rectangle(
+                                (int)Math.Floor(col * currentTileSize + mapOffset.X),
+                                (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                                (int)Math.Ceiling(currentTileSize),
+                                (int)Math.Ceiling(currentTileSize)
+                            ),
+                            p.X * tileSize,
+                            p.Y * tileSize,
+                            tileSize,
+                            tileSize,
+                            GraphicsUnit.Pixel,
+                            attributes
+                        );
+                    }
+
+                    // Draw the base layer of the tile
+                    p = tileGrid[col, row].GetSpritesheetCoordinate();
+                    if (p == null) {
+                        p.X = 8;
+                        p.Y = 8;
+                    }
+
                     e.Graphics.DrawImage(
-                        mapImages[col, row],
+                        spriteSheet,
                         new Rectangle(
                             (int)Math.Floor(col * currentTileSize + mapOffset.X), 
                             (int)Math.Floor(row * currentTileSize + mapOffset.Y),
                             (int)Math.Ceiling(currentTileSize), 
                             (int)Math.Ceiling(currentTileSize)
                         ),
-                        0,
-                        0,
-                        //(col * currentTileSize + mapOffset.X),
-                        //(row * currentTileSize + mapOffset.Y),
-                        //currentTileSize,
-                        //currentTileSize,
-                        mapImages[col, row].Width,
-                        mapImages[col, row].Height,
+                        p.X * tileSize,
+                        p.Y * tileSize,
+                        tileSize,
+                        tileSize,
                         GraphicsUnit.Pixel,
                         attributes
                     );
