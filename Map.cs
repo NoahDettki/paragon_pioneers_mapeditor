@@ -1,15 +1,17 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace ParagonPioneers
 {
     public partial class Map : Form
     {
-        private int[,] tiles;
+        private char[,] tiles;
         private Tile[,] tileGrid;
         private const int SPRITE_SIZE = 128;
 
@@ -19,7 +21,7 @@ namespace ParagonPioneers
         private Point lastDragPoint;
         private Point dragOffset;
 
-        private int selectedTile = 0;
+        private char selectedTile = 'W';
 
         private Image mapErrorImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "MapError.jpg"));
         private Image tileSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Background_Tiles.png"));
@@ -80,7 +82,7 @@ namespace ParagonPioneers
 
         };
 
-        public Map(int[,] tiles) {
+        public Map(char[,] tiles) {
             this.tiles = tiles;
             tileGrid = new Tile[tiles.GetLength(0), tiles.GetLength(1)];
 
@@ -124,7 +126,7 @@ namespace ParagonPioneers
 
             for (int col = 0; col < cols; col++) {
                 for (int row = 0; row < rows; row++) {
-                    tileGrid[col, row] = new Tile(tiles[col, row] == 0 ? Tile.Type.Water : Tile.Type.Land);
+                    tileGrid[col, row] = new Tile(tiles[col, row] == 'W' ? Tile.Type.Water : Tile.Type.Land);
                 }
             }
             for (int col = 0; col < cols; col++) {
@@ -197,7 +199,6 @@ namespace ParagonPioneers
 
                 // There are four extra sprites for water tiles with diagonal neihbouring land tiles
                 if (index == 0) {
-                    Console.WriteLine("Water tile");
                     if (topLeft) {
                         tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][16]);
                         tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][16]);
@@ -240,7 +241,7 @@ namespace ParagonPioneers
                     int y = gridPos.Value.Y;
 
                     tiles[x, y] = selectedTile;
-                    tileGrid[x, y].SetTileType(selectedTile == 0 ? Tile.Type.Water : Tile.Type.Land);
+                    tileGrid[x, y].SetTileType(selectedTile == 'W' ? Tile.Type.Water : Tile.Type.Land);
                     CalculateImageCoordinate(x, y);
 
                     // Update surrounding tiles
@@ -296,17 +297,17 @@ namespace ParagonPioneers
 
         private void waterButton_Click(object sender, EventArgs e)
         {
-            selectedTile = 0;
+            selectedTile = 'W';
         }
 
         private void landButton_Click(object sender, EventArgs e)
         {
-            selectedTile = 1;
+            selectedTile = '0';
         }
 
         private void treeButton_Click(object sender, EventArgs e)
         {
-            selectedTile = 2;
+            selectedTile = '1';
         }
 
         private void exportButton_Click(object sender, EventArgs e)
@@ -326,14 +327,10 @@ namespace ParagonPioneers
 
                     try
                     {
-                        //formatting for visibility
-                        string formatedTiles = JsonConvert.SerializeObject(tiles)
-                            .Replace("],", "]," + Environment.NewLine)
-                            .Replace("[[", "[" + Environment.NewLine + "[")
-                            .Replace("]]", "]" + Environment.NewLine + "]");
+                        string stringTiles = CharArrayToString();
 
                         // Write the content to the file
-                        File.WriteAllText(filePath, formatedTiles);
+                        File.WriteAllText(filePath, stringTiles);
 
                         // Notify the user
                         DialogResult result = MessageBox.Show($"File successfully saved to:\n{filePath}", "Export Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -349,6 +346,26 @@ namespace ParagonPioneers
                     }
                 }
             }
+        }
+
+        public string CharArrayToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < tiles.GetLength(1); j++)
+                {
+                    sb.Append(tiles[i, j]);
+                }
+                if (i < tiles.GetLength(0) - 1) // Add newline after each row, except the last one
+                {
+                    sb.Append("\n");
+                }
+            }
+
+            // Convert StringBuilder to string
+            return sb.ToString();
         }
     }
 }

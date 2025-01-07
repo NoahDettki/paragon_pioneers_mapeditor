@@ -35,15 +35,13 @@ namespace ParagonPioneers {
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //removing whitespaces and line breaks
-            string json = Regex.Replace(textBox1.Text, @"\s+", "");
-
-            if (IsValidJson(json))
+            string input = textBox1.Text;
+            if (IsValidInput(input))
             {
-                int[,] jsonArray = JsonConvert.DeserializeObject<int[,]>(@json);
+                char[,] dataArray = DataToArray(input);
 
                 //show map form and pass the validated array
-                Map map = new Map(jsonArray);
+                Map map = new Map(dataArray);
                 map.Show();
 
                 //hides import menu
@@ -53,7 +51,7 @@ namespace ParagonPioneers {
             }
             else
             {
-                MessageBox.Show("Your JSON is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Your data is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -62,14 +60,29 @@ namespace ParagonPioneers {
             this.Show();
         }
 
-        private bool IsValidJson(string json)
+        private char[,] DataToArray(string data)
+        {
+            // Split the input into lines
+            string[] rows = data.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+            char[,] result = new char[rows.Length, rows[0].Length];
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                for (int j = 0; j < rows[i].Length; j++)
+                {
+                    result[i, j] = rows[i][j];
+                }
+            }
+            return result;
+        }
+
+        private bool IsValidInput(string data)
         {
             try
             {
-                //tries to create a int[,] from json. If it fails it returns false
-                int[,] jsonArray = JsonConvert.DeserializeObject<int[,]>(json);
-                //returns if the json string only contains [ ] 0 1 ,
-                return Regex.IsMatch(json, @"^[\[\], 01]*$"); ;
+                //returns if the json string only contains W K G 0 1 2 3
+                return Regex.IsMatch(data, @"^[WKG0123\n\r]*$");
             }
             catch 
             {
