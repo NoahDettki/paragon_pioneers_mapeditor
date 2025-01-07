@@ -79,6 +79,10 @@ namespace ParagonPioneers
             [Tile.Type.Land] = new[] {
                 new Point(1, 1),
             },
+            // Mountain sprites
+            [Tile.Type.Mountain] = new[] {
+                new Point(1, 11),    // ____
+            },
 
         };
 
@@ -149,6 +153,7 @@ namespace ParagonPioneers
             } else return true;
         }
 
+
         /// <summary>
         /// Checks wether the type of the tile at the specified coordinate is the same type as the specified type
         /// Out of bounds coordinates return true
@@ -165,6 +170,12 @@ namespace ParagonPioneers
             return tileGrid[x, y].GetTileType() == type;
         }
 
+
+        /// <summary>
+        /// Calculates the image coordinate for the tile at the specified position. Neighbouring tiles are considered.
+        /// </summary>
+        /// <param name="x">the x coordinate</param>
+        /// <param name="y">the y coordinate</param>
         private void CalculateImageCoordinate(int x, int y) {
             // Check for out of bounds
             if (!IsInbounds(x, y)) return;
@@ -172,7 +183,7 @@ namespace ParagonPioneers
             Tile.Type type = tileGrid[x, y].GetTileType();
 
             // At the moment there is only one available land sprite
-            if (type != Tile.Type.Water) {
+            if (type == Tile.Type.Land) {
                 tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][0]);
                 return;
             }
@@ -215,6 +226,7 @@ namespace ParagonPioneers
                         tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][0]);
                         tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][0]);
                     }
+                // Otherwise just set a regular sprite
                 } else {
                     tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][index]);
                     tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][index]);
@@ -314,6 +326,8 @@ namespace ParagonPioneers
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
+                String message = "The layout of the map is not allowed. Please correct the map layout before exporting.";
+                MessageBox.Show(message);
                 // Configure the dialog
                 saveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
                 saveFileDialog.DefaultExt = "txt";

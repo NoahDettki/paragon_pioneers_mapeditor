@@ -12,6 +12,9 @@ namespace ParagonPioneers {
             Coast,
             Water,
             Mountain,
+            Tree1,
+            Tree2,
+            Tree3,
         }
         private Type type;
         private int treeCount;
@@ -44,6 +47,19 @@ namespace ParagonPioneers {
 
         public void SetBackgroundCoordinate(Point coord) {
             this.backgroundCoord = coord;
+        }
+
+        public static Tile.Type CharToType(char c) {
+            switch (c) {
+                case 'W': return Type.Water;
+                case 'K': return Type.Coast;
+                case 'G': return Type.Mountain;
+                case '0': return Type.Land;
+                case '1': return Type.Tree1;
+                case '2': return Type.Tree2;
+                case '3': return Type.Tree3;
+                default: throw new ArgumentException("Invalid character");
+            }
         }
     }
 }
