@@ -360,7 +360,7 @@ namespace ParagonPioneers
                 }
                 if (i < tiles.GetLength(0) - 1) // Add newline after each row, except the last one
                 {
-                    sb.Append("\n");
+                    sb.Append(Environment.NewLine);
                 }
             }
 
