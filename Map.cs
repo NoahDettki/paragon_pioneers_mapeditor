@@ -98,6 +98,8 @@ namespace ParagonPioneers
             // Window header
             this.Text = "Tile Grid";
 
+            InitToolTips();
+
             // -- Panel settings (mapPanel) ----------------------
 
             // Removing the ScrollBars
@@ -253,7 +255,7 @@ namespace ParagonPioneers
                     int y = gridPos.Value.Y;
 
                     tiles[x, y] = selectedTile;
-                    tileGrid[x, y].SetTileType(Tile.CharToType(selectedTile);
+                    tileGrid[x, y].SetTileType(Tile.CharToType(selectedTile));
                     CalculateImageCoordinate(x, y);
 
                     // Update surrounding tiles
@@ -390,6 +392,21 @@ namespace ParagonPioneers
 
             // Convert StringBuilder to string
             return sb.ToString();
+        }
+
+        private void InitToolTips()
+        {
+            ToolTip toolTipWater = new ToolTip();
+            toolTipWater.SetToolTip(waterButton, "Water");
+
+            ToolTip toolTipLand = new ToolTip();
+            toolTipWater.SetToolTip(landButton, "Land");
+
+            ToolTip toolTipTree = new ToolTip();
+            toolTipWater.SetToolTip(treeButton, "Tree");
+
+            ToolTip toolTipExport = new ToolTip();
+            toolTipWater.SetToolTip(exportButton, "Export");
         }
     }
 }

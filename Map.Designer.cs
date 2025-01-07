@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Map));
             this.mapPanel = new ParagonPioneers.MapPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.treeButton = new System.Windows.Forms.Button();
@@ -63,48 +64,51 @@
             // treeButton
             // 
             this.treeButton.BackColor = System.Drawing.Color.ForestGreen;
+            this.treeButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("treeButton.BackgroundImage")));
+            this.treeButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.treeButton.ForeColor = System.Drawing.Color.White;
             this.treeButton.Location = new System.Drawing.Point(5, 115);
             this.treeButton.Name = "treeButton";
             this.treeButton.Size = new System.Drawing.Size(50, 50);
             this.treeButton.TabIndex = 3;
-            this.treeButton.Text = "Tree";
             this.treeButton.UseVisualStyleBackColor = false;
             this.treeButton.Click += new System.EventHandler(this.treeButton_Click);
             // 
             // exportButton
             // 
             this.exportButton.BackColor = System.Drawing.Color.Red;
+            this.exportButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("exportButton.BackgroundImage")));
+            this.exportButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.exportButton.ForeColor = System.Drawing.Color.White;
             this.exportButton.Location = new System.Drawing.Point(4, 371);
             this.exportButton.Name = "exportButton";
             this.exportButton.Size = new System.Drawing.Size(50, 50);
             this.exportButton.TabIndex = 2;
-            this.exportButton.Text = "Export";
             this.exportButton.UseVisualStyleBackColor = false;
             this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
             // 
             // landButton
             // 
-            this.landButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.landButton.BackColor = System.Drawing.Color.White;
+            this.landButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("landButton.BackgroundImage")));
+            this.landButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.landButton.ForeColor = System.Drawing.Color.Black;
             this.landButton.Location = new System.Drawing.Point(5, 59);
             this.landButton.Name = "landButton";
             this.landButton.Size = new System.Drawing.Size(50, 50);
             this.landButton.TabIndex = 1;
-            this.landButton.Text = "Land";
             this.landButton.UseVisualStyleBackColor = false;
             this.landButton.Click += new System.EventHandler(this.landButton_Click);
             // 
             // waterButton
             // 
-            this.waterButton.BackColor = System.Drawing.Color.Blue;
+            this.waterButton.BackColor = System.Drawing.Color.White;
+            this.waterButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("waterButton.BackgroundImage")));
             this.waterButton.ForeColor = System.Drawing.Color.White;
             this.waterButton.Location = new System.Drawing.Point(4, 3);
             this.waterButton.Name = "waterButton";
             this.waterButton.Size = new System.Drawing.Size(50, 50);
             this.waterButton.TabIndex = 0;
-            this.waterButton.Text = "Water";
             this.waterButton.UseVisualStyleBackColor = false;
             this.waterButton.Click += new System.EventHandler(this.waterButton_Click);
             // 
