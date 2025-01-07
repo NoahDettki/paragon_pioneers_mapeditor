@@ -130,7 +130,7 @@ namespace ParagonPioneers
 
             for (int col = 0; col < cols; col++) {
                 for (int row = 0; row < rows; row++) {
-                    tileGrid[col, row] = new Tile(tiles[col, row] == 'W' ? Tile.Type.Water : Tile.Type.Land);
+                    tileGrid[col, row] = new Tile(Tile.CharToType(tiles[col, row]));
                 }
             }
             for (int col = 0; col < cols; col++) {
@@ -253,7 +253,7 @@ namespace ParagonPioneers
                     int y = gridPos.Value.Y;
 
                     tiles[x, y] = selectedTile;
-                    tileGrid[x, y].SetTileType(selectedTile == 'W' ? Tile.Type.Water : Tile.Type.Land);
+                    tileGrid[x, y].SetTileType(Tile.CharToType(selectedTile);
                     CalculateImageCoordinate(x, y);
 
                     // Update surrounding tiles
@@ -324,10 +324,20 @@ namespace ParagonPioneers
 
         private void exportButton_Click(object sender, EventArgs e)
         {
+            // Before saving first check if the map is valid. Tell the user if it is not valid
+            for (int col = 0; col < tiles.GetLength(0); col++) {
+                for (int row = 0; row < tiles.GetLength(1); row++) {
+                    if (tileGrid[col, row].GetSpritesheetCoordinate().X == -1) {
+                        // This tile is not valid
+                        String message = "The map is currently not valid. Please correct the map layout before exporting.";
+                        MessageBox.Show(message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+            }
+
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                String message = "The layout of the map is not allowed. Please correct the map layout before exporting.";
-                MessageBox.Show(message);
                 // Configure the dialog
                 saveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
                 saveFileDialog.DefaultExt = "txt";

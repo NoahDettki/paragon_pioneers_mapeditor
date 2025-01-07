@@ -38,7 +38,7 @@ namespace ParagonPioneers {
             string input = textBox1.Text;
             if (IsValidInput(input))
             {
-                char[,] jsonArray = JsonConvert.DeserializeObject<char[,]>(@json);
+                char[,] dataArray = DataToArray(input);
 
                 //show map form and pass the validated array
                 Map map = new Map(dataArray);
