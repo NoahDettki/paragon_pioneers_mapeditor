@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace ParagonPioneers
 {
@@ -54,19 +55,19 @@ namespace ParagonPioneers
             },
             // Coast sprites
             [Tile.Type.Coast] = new[] {
-                new Point(1, 3),    // ____
-                new Point(1, 2),    // T___
-                new Point(1, 4),    // _B__
-                new Point(-1, -1),  // TB__
-                new Point(0, 3),    // __L_
-                new Point(0, 2),    // T_L_
-                new Point(0, 4),    // _BL_
+                new Point(-1, -1),    // ____
+                new Point(-1, -1),    // T___
+                new Point(-1, -1),    // _B__
+                new Point(0, 3),  // TB__
+                new Point(-1, -1),    // __L_
+                new Point(2, 4),    // T_L_
+                new Point(2, 2),    // _BL_
                 new Point(-1, -1),  // TBL_
-                new Point(2, 3),    // ___R
-                new Point(2, 2),    // T__R
-                new Point(2, 4),    // _B_R
+                new Point(-1, -1),    // ___R
+                new Point(0, 4),    // T__R
+                new Point(0, 2),    // _B_R
                 new Point(-1, -1),  // TB_R
-                new Point(-1, -1),  // __LR
+                new Point(1, 2),  // __LR
                 new Point(-1, -1),  // T_LR
                 new Point(-1, -1),  // _BLR
                 new Point(-1, -1),  // TBLR
@@ -192,6 +193,9 @@ namespace ParagonPioneers
 
             // Handling water tiles
             if (type == Tile.Type.Water) {
+                tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][0]);
+                tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][0]);
+                return;
                 // Are the neighbouring tiles land tiles?
                 bool top = IsInbounds(x, y - 1) && tileGrid[x, y - 1].GetTileType() != Tile.Type.Water;
                 bool bottom = IsInbounds(x, y + 1) && tileGrid[x, y + 1].GetTileType() != Tile.Type.Water;
@@ -234,8 +238,98 @@ namespace ParagonPioneers
                     tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][index]);
                 }
             }
+
+            if (type == Tile.Type.Coast)
+            {
+                int coastDirection = GetNeighboursOfType(Tile.Type.Coast, new Point(x, y));
+                int waterNeighbour = GetNeighboursOfType(Tile.Type.Water, new Point(x, y));
+                int landNeighbour = GetNeighboursOfType(Tile.Type.Land, new Point(x, y));
+
+                if (IsOposite(waterNeighbour, landNeighbour) && (coastDirection == 3 || coastDirection == 12))
+                {
+                    tileGrid[x, y].SetSpritesheetCoordinate(GetStraightCoastPoint(waterNeighbour));
+                    tileGrid[x, y].SetBackgroundCoordinate(GetStraightCoastPoint(waterNeighbour));
+                }
+                else if (waterNeighbour == 0)
+                {
+                    tileGrid[x, y].SetSpritesheetCoordinate(GetOuterCornerCoastPoint(coastDirection));
+                    tileGrid[x, y].SetBackgroundCoordinate(GetOuterCornerCoastPoint(coastDirection));
+                }
+                else if (landNeighbour == 0)
+                {
+                    tileGrid[x, y].SetSpritesheetCoordinate(GetInnerCornerCoastPoint(coastDirection));
+                    tileGrid[x, y].SetBackgroundCoordinate(GetInnerCornerCoastPoint(coastDirection));
+                }
+            }
         }
 
+        private Point GetInnerCornerCoastPoint(int coast)
+        {
+            if (coast == 5)
+                return new Point(4, 3);
+            if (coast == 6)
+                return new Point(4, 2);
+            if (coast == 9)
+                return new Point(3, 3);
+            if (coast == 10)
+                return new Point(3, 2);
+            return new Point(-1, -1);
+        }
+
+        private Point GetOuterCornerCoastPoint(int coast)
+        {
+            if (coast == 5)
+                return new Point(2, 4);
+            if (coast == 6)
+                return new Point(2, 2);
+            if (coast == 9)
+                return new Point(0, 4);
+            if (coast == 10)
+                return new Point(0, 2);
+            return new Point(-1, -1);
+        }
+
+        private bool IsOposite(int a, int b)
+        {
+            return (a == 1 && b == 2) || (a == 2 && b == 1) || (a == 4 && b == 8) || (a == 8 && b == 4);
+        }
+
+        private Point GetStraightCoastPoint(int water)
+        {
+            if (water == 1)
+            {
+                return new Point(1, 4);
+            }
+            if (water == 2)
+            {
+                return new Point(1, 2);
+            }
+            if (water == 4)
+            {
+                return new Point(2, 3);
+            }
+            if (water == 8)
+            {
+                return new Point(0, 3);
+            }
+            return new Point();
+        }
+
+        private int GetNeighboursOfType(Tile.Type type, Point pos)
+        {
+            bool top = IsInbounds(pos.X, pos.Y - 1) && tileGrid[pos.X, pos.Y - 1].GetTileType() == type;
+            bool right = IsInbounds(pos.X + 1, pos.Y) && tileGrid[pos.X + 1, pos.Y].GetTileType() == type;
+            bool bottom = IsInbounds(pos.X, pos.Y + 1) && tileGrid[pos.X, pos.Y + 1].GetTileType() == type;
+            bool left = IsInbounds(pos.X - 1, pos.Y) && tileGrid[pos.X - 1, pos.Y].GetTileType() == type;
+
+            int index = 0;
+            index += top ? 1 : 0;
+            index += bottom ? 2 : 0;
+            index += left ? 4 : 0;
+            index += right ? 8 : 0;
+
+            return index;
+        }
 
         /// <summary>
         /// Starts dragging the map.
@@ -324,6 +418,11 @@ namespace ParagonPioneers
             selectedTile = '1';
         }
 
+        private void coastButton_Click(object sender, EventArgs e)
+        {
+            selectedTile = 'K';
+        }
+
         private void exportButton_Click(object sender, EventArgs e)
         {
             // Before saving first check if the map is valid. Tell the user if it is not valid
@@ -396,17 +495,12 @@ namespace ParagonPioneers
 
         private void InitToolTips()
         {
-            ToolTip toolTipWater = new ToolTip();
-            toolTipWater.SetToolTip(waterButton, "Water");
-
-            ToolTip toolTipLand = new ToolTip();
-            toolTipWater.SetToolTip(landButton, "Land");
-
-            ToolTip toolTipTree = new ToolTip();
-            toolTipWater.SetToolTip(treeButton, "Tree");
-
-            ToolTip toolTipExport = new ToolTip();
-            toolTipWater.SetToolTip(exportButton, "Export");
+            ToolTip toolTip = new ToolTip();
+            toolTip.SetToolTip(waterButton, "Water");
+            toolTip.SetToolTip(landButton, "Land");
+            toolTip.SetToolTip(treeButton, "Tree");
+            toolTip.SetToolTip(exportButton, "Export");
+            toolTip.SetToolTip(coastButton, "Coast");
         }
     }
 }

@@ -35,6 +35,7 @@
             this.exportButton = new System.Windows.Forms.Button();
             this.landButton = new System.Windows.Forms.Button();
             this.waterButton = new System.Windows.Forms.Button();
+            this.coastButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,6 +53,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.coastButton);
             this.panel1.Controls.Add(this.treeButton);
             this.panel1.Controls.Add(this.exportButton);
             this.panel1.Controls.Add(this.landButton);
@@ -112,6 +114,19 @@
             this.waterButton.UseVisualStyleBackColor = false;
             this.waterButton.Click += new System.EventHandler(this.waterButton_Click);
             // 
+            // coastButton
+            // 
+            this.coastButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.coastButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.coastButton.ForeColor = System.Drawing.Color.Black;
+            this.coastButton.Location = new System.Drawing.Point(4, 171);
+            this.coastButton.Name = "coastButton";
+            this.coastButton.Size = new System.Drawing.Size(50, 50);
+            this.coastButton.TabIndex = 4;
+            this.coastButton.Text = "coast";
+            this.coastButton.UseVisualStyleBackColor = false;
+            this.coastButton.Click += new System.EventHandler(this.coastButton_Click);
+            // 
             // Map
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -133,5 +148,6 @@
         private System.Windows.Forms.Button landButton;
         private System.Windows.Forms.Button exportButton;
         private System.Windows.Forms.Button treeButton;
+        private System.Windows.Forms.Button coastButton;
     }
 }
