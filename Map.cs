@@ -245,6 +245,13 @@ namespace ParagonPioneers
                 int waterNeighbour = GetNeighboursOfType(Tile.Type.Water, new Point(x, y));
                 int landNeighbour = GetNeighboursOfType(Tile.Type.Land, new Point(x, y));
 
+                if (HasOneNeighbour(coastDirection) || coastDirection == 0)
+                {
+                    tileGrid[x, y].SetSpritesheetCoordinate(new Point(-1, -1));
+                    tileGrid[x, y].SetBackgroundCoordinate(new Point(-1, -1));
+                    return;
+                }
+
                 if (IsOposite(waterNeighbour, landNeighbour) && (coastDirection == 3 || coastDirection == 12))
                 {
                     tileGrid[x, y].SetSpritesheetCoordinate(GetStraightCoastPoint(waterNeighbour));
@@ -261,6 +268,11 @@ namespace ParagonPioneers
                     tileGrid[x, y].SetBackgroundCoordinate(GetInnerCornerCoastPoint(coastDirection));
                 }
             }
+        }
+
+        private bool HasOneNeighbour(int direction)
+        {
+            return direction == 1 || direction == 2 || direction == 4 || direction == 8;
         }
 
         private Point GetInnerCornerCoastPoint(int coast)
