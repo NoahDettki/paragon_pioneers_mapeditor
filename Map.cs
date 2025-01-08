@@ -25,6 +25,7 @@ namespace ParagonPioneers
 
         private Image mapErrorImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "MapError.jpg"));
         private Image tileSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Background_Tiles.png"));
+        private Image treeSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "World_Environment.png"));
 
         // This dictionary contains the coordinates that a specific sprite has on the sprite sheet. It is sorted by the tile type.
         // A point of (-1, -1) indicates that the sprite is not available.
@@ -123,7 +124,7 @@ namespace ParagonPioneers
             // -- Panel settings end -----------------------------
 
             PopulateGrid();
-            mapPanel.Initialize(tileSpritesheet, SPRITE_SIZE, tileGrid, mapErrorImage);
+            mapPanel.Initialize(tileSpritesheet, treeSpritesheet, SPRITE_SIZE, tileGrid, mapErrorImage);
         }
 
         private void PopulateGrid() {
@@ -132,7 +133,7 @@ namespace ParagonPioneers
 
             for (int col = 0; col < cols; col++) {
                 for (int row = 0; row < rows; row++) {
-                    tileGrid[col, row] = new Tile(Tile.CharToType(tiles[col, row]));
+                    tileGrid[col, row] = new Tile(tiles[col, row]);
                 }
             }
             for (int col = 0; col < cols; col++) {
@@ -254,8 +255,14 @@ namespace ParagonPioneers
                     int x = gridPos.Value.X;
                     int y = gridPos.Value.Y;
 
-                    tiles[x, y] = selectedTile;
-                    tileGrid[x, y].SetTileType(Tile.CharToType(selectedTile));
+                    // Trees work a little different than the other tiles
+                    if (selectedTile == '1') {
+                        tileGrid[x, y].IncreaseTrees();
+                        tiles[x, y] = tileGrid[x, y].GetTreeCount().ToString()[0];
+                    } else {
+                        tiles[x, y] = selectedTile;
+                        tileGrid[x, y].SetTileType(Tile.CharToType(selectedTile));
+                    }
                     CalculateImageCoordinate(x, y);
 
                     // Update surrounding tiles

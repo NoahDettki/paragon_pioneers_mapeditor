@@ -11,6 +11,7 @@ using System.Windows.Forms;
 namespace ParagonPioneers {
     internal class MapPanel : Panel{
         private Image spriteSheet;
+        private Image treeSheet;
         private Image mapErrorImage;
         private int tileSize;
         private Tile[,] tileGrid;
@@ -18,13 +19,16 @@ namespace ParagonPioneers {
         private float currentTileSize;
         private PointF mapOffset;
         private bool isInitialized = false;
+        private Rectangle treeRect;
 
         public MapPanel() {
             this.DoubleBuffered = true; // Prevents flickering
+            treeRect = new Rectangle(0, 0, 82, 128);
         }
 
-        public void Initialize(Image spriteSheet, int tileSize, Tile[,] tileGrid, Image mapError) {
+        public void Initialize(Image spriteSheet, Image treeSheet, int tileSize, Tile[,] tileGrid, Image mapError) {
             this.spriteSheet = spriteSheet;
+            this.treeSheet = treeSheet;
             this.tileSize = tileSize;
             this.tileGrid = tileGrid;
             this.mapErrorImage = mapError;
@@ -51,6 +55,11 @@ namespace ParagonPioneers {
 
         public void SetSpriteSheet(Image spriteSheet) {
             this.spriteSheet = spriteSheet;
+            this.Invalidate();
+        }
+
+        public void SetTreeSheet(Image treeSheet) {
+            this.treeSheet = treeSheet;
             this.Invalidate();
         }
 
@@ -176,6 +185,25 @@ namespace ParagonPioneers {
                         GraphicsUnit.Pixel,
                         attributes
                     );
+
+                    // Draw the tree layer
+                    for (int i = 0; i < tileGrid[col, row].GetTreeCount(); i++) {
+                        e.Graphics.DrawImage(
+                            treeSheet,
+                            new Rectangle(
+                                (int)Math.Floor((col + i * 0.3f) * currentTileSize + mapOffset.X),
+                                (int)Math.Floor((row + i * 0.2f) * currentTileSize + mapOffset.Y),
+                                (int)Math.Ceiling(treeRect.Width * zoom * 0.5f),
+                                (int)Math.Ceiling(treeRect.Height * zoom * 0.5f)
+                            ),
+                            treeRect.X,
+                            treeRect.Y,
+                            treeRect.Width,
+                            treeRect.Height,
+                            GraphicsUnit.Pixel,
+                            attributes
+                        );
+                    }
                 }
             }
         }

@@ -21,12 +21,15 @@ namespace ParagonPioneers {
         private Point spriteCoord;
         private Point backgroundCoord;
 
-        public Tile(Type type) {
-            this.type = type;
+        public Tile(char c) {
+            Setup(c);
         }
 
         public void SetTileType(Type type) {
             this.type = type;
+            if (type != Type.Land) {
+                treeCount = 0;
+            }
         }
 
         public Type GetTileType() {
@@ -49,6 +52,18 @@ namespace ParagonPioneers {
             this.backgroundCoord = coord;
         }
 
+        public void IncreaseTrees() {
+            treeCount++;
+            if (treeCount > 3) {
+                treeCount = 0;
+            }
+            type = Type.Land;
+        }
+
+        public int GetTreeCount() {
+            return treeCount;
+        }
+
         public static Tile.Type CharToType(char c) {
             switch (c) {
                 case 'W': return Type.Water;
@@ -58,6 +73,36 @@ namespace ParagonPioneers {
                 case '1': return Type.Tree1;
                 case '2': return Type.Tree2;
                 case '3': return Type.Tree3;
+                default: throw new ArgumentException("Invalid character");
+            }
+        }
+
+        public void Setup(char c) {
+            switch (c) {
+                case 'W':
+                    type = Type.Water;
+                    break;
+                case 'K':
+                    type = Type.Coast;
+                    break;
+                case 'G':
+                    type = Type.Mountain;
+                    break;
+                case '0':
+                    type = Type.Land;
+                    break;
+                case '1': 
+                    type = Type.Land;
+                    treeCount = 1;
+                    break;
+                case '2':
+                    type = Type.Land;
+                    treeCount = 2;
+                    break;
+                case '3':
+                    type = Type.Land;
+                    treeCount = 3;
+                    break;
                 default: throw new ArgumentException("Invalid character");
             }
         }
