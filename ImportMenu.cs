@@ -1,15 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 namespace ParagonPioneers {
@@ -36,23 +27,47 @@ namespace ParagonPioneers {
         private void button1_Click(object sender, EventArgs e)
         {
             string input = textBox1.Text;
-            if (IsValidInput(input))
-            {
-                char[,] dataArray = DataToArray(input);
 
-                //show map form and pass the validated array
-                Map map = new Map(dataArray);
-                map.Show();
-
-                //hides import menu
-                this.Hide();
-
-                map.FormClosed += ShowImportMenu;
+            // Make sure that the input is not empty.
+            if (input.Equals("")) {
+                MessageBox.Show("Import field is empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
-            else
-            {
+
+            // Validate the input. Only specific characters are allowed.
+            if (!IsValidInput(input)) {
                 MessageBox.Show("Your data is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+
+            // Make sure that the input is rectangular. Every line must have the same length.
+            string[] lines = input.Split('\n');
+            int firstLineLength = lines[0].TrimEnd('\r').Length; // Windows is weird. Trim '\r' from the first line
+            Console.WriteLine(firstLineLength);
+
+            foreach (string l in lines) {
+                int lineLength = l.TrimEnd('\r').Length; // Windows is still weird. Trim '\r' from each line
+                Console.WriteLine(lineLength);
+                if (lineLength != firstLineLength) {
+                    MessageBox.Show("Every line must have the same number of characters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            // The input is now definitively valid
+
+
+            char[,] dataArray = DataToArray(input);
+
+            //show map form and pass the validated array
+            Map map = new Map(dataArray);
+            map.Show();
+
+            //hides import menu
+            this.Hide();
+
+            map.FormClosed += ShowImportMenu;
+            
         }
 
         private void ShowImportMenu(object sender, FormClosedEventArgs e)
