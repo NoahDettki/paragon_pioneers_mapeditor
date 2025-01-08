@@ -26,6 +26,8 @@ namespace ParagonPioneers
         private Image mapErrorImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "MapError.jpg"));
         private Image tileSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Background_Tiles.png"));
         private Image treeSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "World_Environment.png"));
+        private Image toggleGridOn = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "ToggleGridOn.png"));
+        private Image toggleGridOff = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "ToggleGridOff.png"));
 
         // This dictionary contains the coordinates that a specific sprite has on the sprite sheet. It is sorted by the tile type.
         // A point of (-1, -1) indicates that the sprite is not available.
@@ -414,6 +416,16 @@ namespace ParagonPioneers
 
             ToolTip toolTipExport = new ToolTip();
             toolTipWater.SetToolTip(exportButton, "Export");
+        }
+
+        private void GridOption_Toggle(object sender, EventArgs e) {
+            if (checkBox1.Checked) {
+                checkBox1.BackgroundImage = toggleGridOn;
+                mapPanel.ToggleGrid(true);
+            } else {
+                checkBox1.BackgroundImage = toggleGridOff;
+                mapPanel.ToggleGrid(false);
+            }
         }
     }
 }
