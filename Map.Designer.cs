@@ -37,6 +37,7 @@
             this.exportButton = new System.Windows.Forms.Button();
             this.landButton = new System.Windows.Forms.Button();
             this.waterButton = new System.Windows.Forms.Button();
+            this.mountainButton = new System.Windows.Forms.Button();
             this.mapPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -70,6 +71,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.mountainButton);
             this.panel1.Controls.Add(this.coastButton);
             this.panel1.Controls.Add(this.treeButton);
             this.panel1.Controls.Add(this.exportButton);
@@ -99,7 +101,7 @@
             this.treeButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("treeButton.BackgroundImage")));
             this.treeButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.treeButton.ForeColor = System.Drawing.Color.White;
-            this.treeButton.Location = new System.Drawing.Point(5, 115);
+            this.treeButton.Location = new System.Drawing.Point(4, 115);
             this.treeButton.Name = "treeButton";
             this.treeButton.Size = new System.Drawing.Size(50, 50);
             this.treeButton.TabIndex = 3;
@@ -125,7 +127,7 @@
             this.landButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("landButton.BackgroundImage")));
             this.landButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.landButton.ForeColor = System.Drawing.Color.Black;
-            this.landButton.Location = new System.Drawing.Point(5, 59);
+            this.landButton.Location = new System.Drawing.Point(4, 59);
             this.landButton.Name = "landButton";
             this.landButton.Size = new System.Drawing.Size(50, 50);
             this.landButton.TabIndex = 1;
@@ -143,6 +145,17 @@
             this.waterButton.TabIndex = 0;
             this.waterButton.UseVisualStyleBackColor = false;
             this.waterButton.Click += new System.EventHandler(this.waterButton_Click);
+            // 
+            // mountainButton
+            // 
+            this.mountainButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("mountainButton.BackgroundImage")));
+            this.mountainButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.mountainButton.Location = new System.Drawing.Point(4, 227);
+            this.mountainButton.Name = "mountainButton";
+            this.mountainButton.Size = new System.Drawing.Size(50, 50);
+            this.mountainButton.TabIndex = 5;
+            this.mountainButton.UseVisualStyleBackColor = true;
+            this.mountainButton.Click += new System.EventHandler(this.mountainButton_Click);
             // 
             // Map
             // 
@@ -168,5 +181,6 @@
         private System.Windows.Forms.Button treeButton;
         private System.Windows.Forms.Button coastButton;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button mountainButton;
     }
 }

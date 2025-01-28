@@ -86,7 +86,22 @@ namespace ParagonPioneers
             },
             // Mountain sprites
             [Tile.Type.Mountain] = new[] {
-                new Point(1, 11),    // ____
+                new Point(-1, -1),  // ____
+                new Point(-1, -1),  // T___
+                new Point(-1, -1),  // _B__
+                new Point(0, 10),   // TB__ or (2, 10)
+                new Point(-1, -1),  // __L_
+                new Point(2, 11),   // T_L_ or (4, 10)
+                new Point(2, 9),    // _BL_ or (4, 9)
+                new Point(-1, -1),  // TBL_
+                new Point(-1, -1),  // ___R
+                new Point(0, 11),   // T__R or (3, 10)
+                new Point(0, 9),    // _B_R or (3, 9)
+                new Point(-1, -1),  // TB_R
+                new Point(1, 11),   // __LR or (1, 9)
+                new Point(-1, -1),  // T_LR
+                new Point(-1, -1),  // _BLR
+                new Point(-1, -1),  // TBLR
             },
 
         };
@@ -230,6 +245,53 @@ namespace ParagonPioneers
                     tileGrid[x, y].SetSpritesheetCoordinate(GetInnerCornerCoastPoint(coastDirection, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetInnerCornerCoastPoint(coastDirection));
                 }
+            }
+
+            if(type == Tile.Type.Mountain) {
+                // check neighbours
+                bool top = IsTypeAt(x, y - 1, Tile.Type.Mountain);
+                bool bottom = IsTypeAt(x, y + 1, Tile.Type.Mountain);
+                bool left = IsTypeAt(x - 1, y, Tile.Type.Mountain);
+                bool right = IsTypeAt(x + 1, y, Tile.Type.Mountain);
+
+                // choose the correct sprite
+                int spriteId = 0;
+                spriteId += top ? 1 : 0;
+                spriteId += bottom ? 2 : 0;
+                spriteId += left ? 4 : 0;
+                spriteId += right ? 8 : 0;
+                tileGrid[x,y].SetSpritesheetCoordinate(spritesheetCoordinates[type][spriteId]);
+
+                // there are many special cases that require further investigation
+                if (spriteId == 3) {
+                    // TB__ can also be (2, 10)
+                    int i = y;
+                    while(true) {
+                        i++;
+                        if (!IsInbounds(x, i)) break;
+
+                        Point p = tileGrid[x, i].GetSpritesheetCoordinate();
+                        if (p.X == 2 && p.Y == 11) {
+                            tileGrid[x, y].SetSpritesheetCoordinate(new Point(2, 10));
+                            break;
+                        }
+                    }
+                }
+                if (spriteId == 12) {
+                    // __LR can also be (1, 9)
+                    int i = x;
+                    while (true) {
+                        i++;
+                        if (!IsInbounds(i, y)) break;
+
+                        Point p = tileGrid[i, y].GetSpritesheetCoordinate();
+                        if (p.X == 2 && p.Y == 9) {
+                            tileGrid[x, y].SetSpritesheetCoordinate(new Point(1, 9));
+                            break;
+                        }
+                    }
+                }
+                
             }
         }
 
@@ -485,6 +547,10 @@ namespace ParagonPioneers
         private void coastButton_Click(object sender, EventArgs e)
         {
             selectedTile = 'K';
+        }
+
+        private void mountainButton_Click(object sender, EventArgs e) {
+            selectedTile = 'G';
         }
 
         private void exportButton_Click(object sender, EventArgs e)

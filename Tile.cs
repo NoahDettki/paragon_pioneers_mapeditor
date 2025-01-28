@@ -20,6 +20,7 @@ namespace ParagonPioneers {
         private int treeCount;
         private Point spriteCoord;
         private Point backgroundCoord;
+        private bool mountainFlip;
 
         public Tile(char c) {
             Setup(c);
