@@ -36,11 +36,14 @@
             this.landButton = new System.Windows.Forms.Button();
             this.waterButton = new System.Windows.Forms.Button();
             this.coastButton = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.mapPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // mapPanel
             // 
+            this.mapPanel.Controls.Add(this.checkBox1);
             this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapPanel.Location = new System.Drawing.Point(0, 0);
             this.mapPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -126,6 +129,19 @@
             this.coastButton.Text = "coast";
             this.coastButton.UseVisualStyleBackColor = false;
             this.coastButton.Click += new System.EventHandler(this.coastButton_Click);
+            // checkBox1
+            // 
+            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("checkBox1.BackgroundImage")));
+            this.checkBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(0, 0);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(25, 25);
+            this.checkBox1.TabIndex = 0;
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.GridOption_Toggle);
             // 
             // Map
             // 
@@ -136,6 +152,7 @@
             this.Controls.Add(this.mapPanel);
             this.Name = "Map";
             this.Text = "Map";
+            this.mapPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -149,5 +166,6 @@
         private System.Windows.Forms.Button exportButton;
         private System.Windows.Forms.Button treeButton;
         private System.Windows.Forms.Button coastButton;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

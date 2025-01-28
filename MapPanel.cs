@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ParagonPioneers {
     internal class MapPanel : Panel{
         private Image spriteSheet;
+        private Image treeSheet;
         private Image mapErrorImage;
         private int tileSize;
         private Tile[,] tileGrid;
@@ -18,13 +15,18 @@ namespace ParagonPioneers {
         private float currentTileSize;
         private PointF mapOffset;
         private bool isInitialized = false;
+        private Rectangle treeRect;
+        private bool drawGrid;
 
         public MapPanel() {
             this.DoubleBuffered = true; // Prevents flickering
+            treeRect = new Rectangle(0, 0, 82, 128);
+            drawGrid = true;
         }
 
-        public void Initialize(Image spriteSheet, int tileSize, Tile[,] tileGrid, Image mapError) {
+        public void Initialize(Image spriteSheet, Image treeSheet, int tileSize, Tile[,] tileGrid, Image mapError) {
             this.spriteSheet = spriteSheet;
+            this.treeSheet = treeSheet;
             this.tileSize = tileSize;
             this.tileGrid = tileGrid;
             this.mapErrorImage = mapError;
@@ -46,17 +48,27 @@ namespace ParagonPioneers {
 
         public void SetTileGrid(Tile[,] grid) {
             tileGrid = grid;
-            this.Invalidate();
+            Invalidate();
         }
 
         public void SetSpriteSheet(Image spriteSheet) {
             this.spriteSheet = spriteSheet;
-            this.Invalidate();
+            Invalidate();
+        }
+
+        public void SetTreeSheet(Image treeSheet) {
+            this.treeSheet = treeSheet;
+            Invalidate();
         }
 
         public void SetTileSize(int size) {
             tileSize = size;
-            this.Invalidate();
+            Invalidate();
+        }
+
+        public void ToggleGrid(bool toggle) {
+            this.drawGrid = toggle;
+            Invalidate();
         }
 
         public void MoveMap(float dx, float dy)
@@ -72,7 +84,7 @@ namespace ParagonPioneers {
             // Clamp Y offset
             mapOffset.Y = Math.Max(Math.Min(mapOffset.Y + dy, this.Height - gap), 0 - mapImageHeight + gap);
 
-            this.Invalidate();
+            Invalidate();
         }
 
         public void Zoom(float delta, Point mousePos) {
@@ -90,7 +102,7 @@ namespace ParagonPioneers {
             mapOffset.X = (float)mousePos.X - zoom / oldZoomLevel* (float)(mousePos.X - mapOffset.X);
             mapOffset.Y = (float)mousePos.Y - zoom / oldZoomLevel * (float)(mousePos.Y - mapOffset.Y);
 
-            this.Invalidate();
+            Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e) {
@@ -176,6 +188,44 @@ namespace ParagonPioneers {
                         GraphicsUnit.Pixel,
                         attributes
                     );
+
+                    // Draw the tree layer
+                    for (int i = 0; i < tileGrid[col, row].GetTreeCount(); i++) {
+                        e.Graphics.DrawImage(
+                            treeSheet,
+                            new Rectangle(
+                                (int)Math.Floor((col + i * 0.3f) * currentTileSize + mapOffset.X),
+                                (int)Math.Floor((row + i * 0.2f) * currentTileSize + mapOffset.Y),
+                                (int)Math.Ceiling(treeRect.Width * zoom * 0.5f),
+                                (int)Math.Ceiling(treeRect.Height * zoom * 0.5f)
+                            ),
+                            treeRect.X,
+                            treeRect.Y,
+                            treeRect.Width,
+                            treeRect.Height,
+                            GraphicsUnit.Pixel,
+                            attributes
+                        );
+                    }
+                }
+            }
+
+            // Draw grid lines
+            if (drawGrid) {
+                Pen pen = new Pen(Color.DimGray, 1);
+                PointF start;
+                PointF end;
+                // Vertical lines
+                for (int col = 1; col < tileGrid.GetLength(0); col++) {
+                    start = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y);
+                    end = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y + tileGrid.GetLength(1) * currentTileSize);
+                    e.Graphics.DrawLine(pen, start, end);
+                }
+                // Horrizontal lines
+                for (int row = 1; row < tileGrid.GetLength(1); row++) {
+                    start = new PointF(mapOffset.X, mapOffset.Y + row * currentTileSize);
+                    end = new PointF(mapOffset.X + tileGrid.GetLength(0) * currentTileSize, mapOffset.Y + row * currentTileSize);
+                    e.Graphics.DrawLine(pen, start, end);
                 }
             }
         }
