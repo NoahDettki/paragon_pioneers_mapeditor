@@ -197,49 +197,6 @@ namespace ParagonPioneers
             // Handling water tiles
             if (type == Tile.Type.Water) {
                 tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][0]);
-                tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][0]);
-                return;
-                // Are the neighbouring tiles land tiles?
-                bool top = IsInbounds(x, y - 1) && tileGrid[x, y - 1].GetTileType() != Tile.Type.Water;
-                bool bottom = IsInbounds(x, y + 1) && tileGrid[x, y + 1].GetTileType() != Tile.Type.Water;
-                bool left = IsInbounds(x - 1, y) && tileGrid[x - 1, y].GetTileType() != Tile.Type.Water;
-                bool right = IsInbounds(x + 1, y) && tileGrid[x + 1, y].GetTileType() != Tile.Type.Water;
-
-                bool topLeft = IsInbounds(x - 1, y - 1) && tileGrid[x - 1, y - 1].GetTileType() != Tile.Type.Water;
-                bool topRight = IsInbounds(x + 1, y - 1) && tileGrid[x + 1, y - 1].GetTileType() != Tile.Type.Water;
-                bool bottomLeft = IsInbounds(x - 1, y + 1) && tileGrid[x - 1, y + 1].GetTileType() != Tile.Type.Water;
-                bool bottomRight = IsInbounds(x + 1, y + 1) && tileGrid[x + 1, y + 1].GetTileType() != Tile.Type.Water;
-
-                // Return water sprite coordinate based on neighbouring tiles
-                int index = 0;
-                index += top ? 1 : 0;
-                index += bottom ? 2 : 0;
-                index += left ? 4 : 0;
-                index += right ? 8 : 0;
-
-                // There are four extra sprites for water tiles with diagonal neihbouring land tiles
-                if (index == 0) {
-                    if (topLeft) {
-                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][16]);
-                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][16]);
-                    } else if (topRight) {
-                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][17]);
-                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][17]);
-                    } else if (bottomLeft) {
-                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][18]);
-                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][18]);
-                    } else if (bottomRight) {
-                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][19]);
-                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][19]);
-                    } else {
-                        tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][0]);
-                        tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][0]);
-                    }
-                // Otherwise just set a regular sprite
-                } else {
-                    tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][index]);
-                    tileGrid[x, y].SetBackgroundCoordinate(spritesheetCoordinates[Tile.Type.Coast][index]);
-                }
             }
 
             if (type == Tile.Type.Coast)
@@ -257,17 +214,17 @@ namespace ParagonPioneers
 
                 if (IsOposite(waterNeighbour, landNeighbour) && (coastDirection == 3 || coastDirection == 12))
                 {
-                    tileGrid[x, y].SetSpritesheetCoordinate(GetStraightCoastPoint(waterNeighbour));
+                    tileGrid[x, y].SetSpritesheetCoordinate(GetStraightCoastPoint(waterNeighbour, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetStraightCoastPoint(waterNeighbour));
                 }
                 else if (waterNeighbour == 0)
                 {
-                    tileGrid[x, y].SetSpritesheetCoordinate(GetOuterCornerCoastPoint(coastDirection));
+                    tileGrid[x, y].SetSpritesheetCoordinate(GetOuterCornerCoastPoint(coastDirection, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetOuterCornerCoastPoint(coastDirection));
                 }
                 else if (landNeighbour == 0)
                 {
-                    tileGrid[x, y].SetSpritesheetCoordinate(GetInnerCornerCoastPoint(coastDirection));
+                    tileGrid[x, y].SetSpritesheetCoordinate(GetInnerCornerCoastPoint(coastDirection, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetInnerCornerCoastPoint(coastDirection));
                 }
             }
@@ -278,29 +235,56 @@ namespace ParagonPioneers
             return direction == 1 || direction == 2 || direction == 4 || direction == 8;
         }
 
-        private Point GetInnerCornerCoastPoint(int coast)
+        private Point GetInnerCornerCoastPoint(int coast, bool useWaterSprite = false)
         {
-            if (coast == 5)
-                return new Point(4, 3);
-            if (coast == 6)
-                return new Point(4, 2);
-            if (coast == 9)
-                return new Point(3, 3);
-            if (coast == 10)
-                return new Point(3, 2);
+            if (!useWaterSprite)
+            {
+                if (coast == 5)
+                    return new Point(4, 3);
+                if (coast == 6)
+                    return new Point(4, 2);
+                if (coast == 9)
+                    return new Point(3, 3);
+                if (coast == 10)
+                    return new Point(3, 2);
+            } else
+            {
+                if (coast == 5)
+                    return new Point(5, 7);
+                if (coast == 6)
+                    return new Point(5, 6);
+                if (coast == 9)
+                    return new Point(4, 7);
+                if (coast == 10)
+                    return new Point(4, 6);
+            }
             return new Point(-1, -1);
         }
 
-        private Point GetOuterCornerCoastPoint(int coast)
+        private Point GetOuterCornerCoastPoint(int coast, bool useWaterSprite = false)
         {
-            if (coast == 5)
-                return new Point(2, 4);
-            if (coast == 6)
-                return new Point(2, 2);
-            if (coast == 9)
-                return new Point(0, 4);
-            if (coast == 10)
-                return new Point(0, 2);
+            if (!useWaterSprite)
+            {
+                if (coast == 5)
+                    return new Point(2, 4);
+                if (coast == 6)
+                    return new Point(2, 2);
+                if (coast == 9)
+                    return new Point(0, 4);
+                if (coast == 10)
+                    return new Point(0, 2);
+            }
+            else
+            {
+                if (coast == 5)
+                    return new Point(2, 7);
+                if (coast == 6)
+                    return new Point(2, 5);
+                if (coast == 9)
+                    return new Point(0, 7);
+                if (coast == 10)
+                    return new Point(0, 5);
+            }
             return new Point(-1, -1);
         }
 
@@ -309,23 +293,28 @@ namespace ParagonPioneers
             return (a == 1 && b == 2) || (a == 2 && b == 1) || (a == 4 && b == 8) || (a == 8 && b == 4);
         }
 
-        private Point GetStraightCoastPoint(int water)
+        private Point GetStraightCoastPoint(int water, bool useWaterSprite = false)
         {
-            if (water == 1)
+            if (!useWaterSprite)
             {
-                return new Point(1, 4);
-            }
-            if (water == 2)
+                if (water == 1)
+                    return new Point(1, 4);
+                if (water == 2)
+                    return new Point(1, 2);
+                if (water == 4)
+                    return new Point(2, 3);
+                if (water == 8)
+                    return new Point(0, 3);
+            } else
             {
-                return new Point(1, 2);
-            }
-            if (water == 4)
-            {
-                return new Point(2, 3);
-            }
-            if (water == 8)
-            {
-                return new Point(0, 3);
+                if (water == 1)
+                    return new Point(1, 7);
+                if (water == 2)
+                    return new Point(1, 5);
+                if (water == 4)
+                    return new Point(2, 6);
+                if (water == 8)
+                    return new Point(0, 6);
             }
             return new Point();
         }

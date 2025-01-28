@@ -146,7 +146,7 @@ namespace ParagonPioneers {
                     }
 
                     // Water tiles have an additional background layer
-                    if (tileGrid[col, row].GetTileType() == Tile.Type.Water) {
+                    if (tileGrid[col, row].GetTileType() == Tile.Type.Coast) {
                         p = tileGrid[col, row].GetBackgroundCoordinate();
 
                         e.Graphics.DrawImage(
