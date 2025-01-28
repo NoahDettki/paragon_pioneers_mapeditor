@@ -19,6 +19,7 @@ namespace ParagonPioneers
         // Dragging and zooming the map
         private const float ZOOM_FACTOR = 0.0005f;
         private bool isDragging = false;
+        private bool isPainting = false;
         private Point lastDragPoint;
         private Point dragOffset;
 
@@ -201,9 +202,11 @@ namespace ParagonPioneers
 
             if (type == Tile.Type.Coast)
             {
-                int coastDirection = GetNeighboursOfType(Tile.Type.Coast, new Point(x, y));
-                int waterNeighbour = GetNeighboursOfType(Tile.Type.Water, new Point(x, y));
-                int landNeighbour = GetNeighboursOfType(Tile.Type.Land, new Point(x, y));
+                Point point = new Point(x, y);
+
+                int coastDirection = GetNeighboursOfType(Tile.Type.Coast, point);
+                int waterNeighbour = GetNeighboursOfType(Tile.Type.Water, point, true);
+                int landNeighbour = GetNeighboursOfType(Tile.Type.Land, point);
 
                 if (HasOneNeighbour(coastDirection) || coastDirection == 0)
                 {
@@ -319,12 +322,44 @@ namespace ParagonPioneers
             return new Point();
         }
 
-        private int GetNeighboursOfType(Tile.Type type, Point pos)
+        private int GetNeighboursOfType(Tile.Type type, Point pos, bool countNoneAsTile = false)
         {
-            bool top = IsInbounds(pos.X, pos.Y - 1) && tileGrid[pos.X, pos.Y - 1].GetTileType() == type;
-            bool right = IsInbounds(pos.X + 1, pos.Y) && tileGrid[pos.X + 1, pos.Y].GetTileType() == type;
-            bool bottom = IsInbounds(pos.X, pos.Y + 1) && tileGrid[pos.X, pos.Y + 1].GetTileType() == type;
-            bool left = IsInbounds(pos.X - 1, pos.Y) && tileGrid[pos.X - 1, pos.Y].GetTileType() == type;
+            bool top, right, bottom, left;
+
+            if (IsInbounds(pos.X, pos.Y - 1))
+            {
+                top = tileGrid[pos.X, pos.Y - 1].GetTileType() == type;
+            } else
+            {
+                top = countNoneAsTile;
+            }
+
+            if (IsInbounds(pos.X + 1, pos.Y))
+            {
+                right = tileGrid[pos.X + 1, pos.Y].GetTileType() == type;
+            }
+            else
+            {
+                right = countNoneAsTile;
+            }
+
+            if (IsInbounds(pos.X, pos.Y + 1))
+            {
+                bottom = tileGrid[pos.X, pos.Y + 1].GetTileType() == type;
+            }
+            else
+            {
+                bottom = countNoneAsTile;
+            }
+
+            if (IsInbounds(pos.X - 1, pos.Y))
+            {
+                left = tileGrid[pos.X - 1, pos.Y].GetTileType() == type;
+            }
+            else
+            {
+                left = countNoneAsTile;
+            }
 
             int index = 0;
             index += top ? 1 : 0;
@@ -333,6 +368,45 @@ namespace ParagonPioneers
             index += right ? 8 : 0;
 
             return index;
+        }
+
+        private void SetTileAt(Point mouseLocation)
+        {
+            Point? gridPos = mapPanel.MouseToGrid(mouseLocation);
+
+            if (gridPos != null)
+            {
+                int x = gridPos.Value.X;
+                int y = gridPos.Value.Y;
+
+                // Trees work a little different than the other tiles
+                if (selectedTile == '1')
+                {
+                    tileGrid[x, y].IncreaseTrees();
+                    tiles[x, y] = tileGrid[x, y].GetTreeCount().ToString()[0];
+                }
+                else
+                {
+                    tiles[x, y] = selectedTile;
+                    tileGrid[x, y].SetTileType(Tile.CharToType(selectedTile));
+                }
+                CalculateImageCoordinate(x, y);
+
+                // Update surrounding tiles
+                // Orthogonal neighbours
+                CalculateImageCoordinate(x - 1, y);
+                CalculateImageCoordinate(x + 1, y);
+                CalculateImageCoordinate(x, y - 1);
+                CalculateImageCoordinate(x, y + 1);
+                // Diagonal neighbours
+                CalculateImageCoordinate(x - 1, y - 1);
+                CalculateImageCoordinate(x - 1, y + 1);
+                CalculateImageCoordinate(x + 1, y - 1);
+                CalculateImageCoordinate(x + 1, y + 1);
+
+                // The panel has to be drawn again to show the changes
+                mapPanel.Invalidate();
+            }
         }
 
         /// <summary>
@@ -345,38 +419,8 @@ namespace ParagonPioneers
                 isDragging = true;
                 lastDragPoint = e.Location;
             } else if (e.Button == MouseButtons.Left) {
-                Point? gridPos = mapPanel.MouseToGrid(e.Location);
-                
-                if (gridPos != null)
-                {
-                    int x = gridPos.Value.X;
-                    int y = gridPos.Value.Y;
-
-                    // Trees work a little different than the other tiles
-                    if (selectedTile == '1') {
-                        tileGrid[x, y].IncreaseTrees();
-                        tiles[x, y] = tileGrid[x, y].GetTreeCount().ToString()[0];
-                    } else {
-                        tiles[x, y] = selectedTile;
-                        tileGrid[x, y].SetTileType(Tile.CharToType(selectedTile));
-                    }
-                    CalculateImageCoordinate(x, y);
-
-                    // Update surrounding tiles
-                    // Orthogonal neighbours
-                    CalculateImageCoordinate(x - 1, y);
-                    CalculateImageCoordinate(x + 1, y);
-                    CalculateImageCoordinate(x, y - 1);
-                    CalculateImageCoordinate(x, y + 1);
-                    // Diagonal neighbours
-                    CalculateImageCoordinate(x - 1, y - 1);
-                    CalculateImageCoordinate(x - 1, y + 1);
-                    CalculateImageCoordinate(x + 1, y - 1);
-                    CalculateImageCoordinate(x + 1, y + 1);
-
-                    // The panel has to be drawn again to show the changes
-                    mapPanel.Invalidate();
-                }
+                isPainting = true;
+                SetTileAt(e.Location);
             }
         }
 
@@ -393,6 +437,11 @@ namespace ParagonPioneers
 
                 lastDragPoint = currentPos;
             }
+
+            if (isPainting)
+            {
+                SetTileAt(e.Location);
+            }
         }
 
         /// <summary>
@@ -403,6 +452,11 @@ namespace ParagonPioneers
         private void Map_MouseUp(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Right) {
                 isDragging = false;
+            }
+            if (e.Button == MouseButtons.Left)
+            {
+                SetTileAt(e.Location);
+                isPainting = false;
             }
         }
 

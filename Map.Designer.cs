@@ -30,13 +30,13 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Map));
             this.mapPanel = new ParagonPioneers.MapPanel();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.coastButton = new System.Windows.Forms.Button();
             this.treeButton = new System.Windows.Forms.Button();
             this.exportButton = new System.Windows.Forms.Button();
             this.landButton = new System.Windows.Forms.Button();
             this.waterButton = new System.Windows.Forms.Button();
-            this.coastButton = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.mapPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -50,6 +50,20 @@
             this.mapPanel.Name = "mapPanel";
             this.mapPanel.Size = new System.Drawing.Size(800, 450);
             this.mapPanel.TabIndex = 2;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("checkBox1.BackgroundImage")));
+            this.checkBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(0, 0);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(25, 25);
+            this.checkBox1.TabIndex = 0;
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.GridOption_Toggle);
             // 
             // panel1
             // 
@@ -65,6 +79,19 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(60, 426);
             this.panel1.TabIndex = 1;
+            // 
+            // coastButton
+            // 
+            this.coastButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.coastButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("coastButton.BackgroundImage")));
+            this.coastButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.coastButton.ForeColor = System.Drawing.Color.Black;
+            this.coastButton.Location = new System.Drawing.Point(4, 171);
+            this.coastButton.Name = "coastButton";
+            this.coastButton.Size = new System.Drawing.Size(50, 50);
+            this.coastButton.TabIndex = 4;
+            this.coastButton.UseVisualStyleBackColor = false;
+            this.coastButton.Click += new System.EventHandler(this.coastButton_Click);
             // 
             // treeButton
             // 
@@ -116,32 +143,6 @@
             this.waterButton.TabIndex = 0;
             this.waterButton.UseVisualStyleBackColor = false;
             this.waterButton.Click += new System.EventHandler(this.waterButton_Click);
-            // 
-            // coastButton
-            // 
-            this.coastButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.coastButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.coastButton.ForeColor = System.Drawing.Color.Black;
-            this.coastButton.Location = new System.Drawing.Point(4, 171);
-            this.coastButton.Name = "coastButton";
-            this.coastButton.Size = new System.Drawing.Size(50, 50);
-            this.coastButton.TabIndex = 4;
-            this.coastButton.Text = "coast";
-            this.coastButton.UseVisualStyleBackColor = false;
-            this.coastButton.Click += new System.EventHandler(this.coastButton_Click);
-            // checkBox1
-            // 
-            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("checkBox1.BackgroundImage")));
-            this.checkBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(0, 0);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(25, 25);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.GridOption_Toggle);
             // 
             // Map
             // 
