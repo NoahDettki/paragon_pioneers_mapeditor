@@ -16,12 +16,11 @@ namespace ParagonPioneers {
         private PointF mapOffset;
         private bool isInitialized = false;
         private Rectangle treeRect;
-        private bool drawGrid;
+        private bool isGridVisible = true;
 
         public MapPanel() {
             this.DoubleBuffered = true; // Prevents flickering
             treeRect = new Rectangle(0, 0, 82, 128);
-            drawGrid = true;
         }
 
         public void Initialize(Image spriteSheet, Image treeSheet, int tileSize, Tile[,] tileGrid, Image mapError) {
@@ -67,7 +66,7 @@ namespace ParagonPioneers {
         }
 
         public void ToggleGrid(bool toggle) {
-            this.drawGrid = toggle;
+            this.isGridVisible = toggle;
             Invalidate();
         }
 
@@ -109,125 +108,145 @@ namespace ParagonPioneers {
             base.OnPaint(e);
 
             // This is important especially for the [Design] view, because the images array will be empty at that point
-            if (isInitialized == false) {
+            if (!isInitialized) {
                 return;
             }
 
-            e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-            e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.None;
+            e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            e.Graphics.SmoothingMode = SmoothingMode.None;
+            e.Graphics.PixelOffsetMode = PixelOffsetMode.None;
 
+            DrawGridTiles(e);
+
+            if (isGridVisible) {
+                DrawGrid(e);
+            }
+        }
+
+        private void DrawGridTiles(PaintEventArgs e)
+        {
+            for (int col = 0; col < tileGrid.GetLength(0); col++)
+            {
+                for (int row = 0; row < tileGrid.GetLength(1); row++)
+                {
+                    //TODO maybe switch row and col
+
+                    Tile tile = tileGrid[col, row];
+
+                    // Draw additional background layer for coast
+                    if (tile.IsTileType(Tile.Type.Coast))
+                    {
+                        DrawImage(e, row, col, spriteSheet, tile.GetBackgroundCoordinate());
+                    }
+
+                    //spriteSheetPosition = tile.GetSpritesheetCoordinate();
+                    //if (spriteSheetPosition == null) {
+                    //    spriteSheetPosition.X = 8;
+                    //    spriteSheetPosition.Y = 8;
+                    //}
+
+                    // Draw the base layer of the tile
+                    DrawImage(e, row, col, spriteSheet, tile.GetSpritesheetCoordinate());
+
+                    // Draw the tree layer
+                    for (int i = 0; i < tile.GetTreeCount(); i++)
+                    {
+                        DrawImage(e, row + i * 0.2f, col + i * 0.3f, treeSheet, treeRect);
+                    }
+
+                    // Draw Error Image
+                    if (tile.GetSpritesheetCoordinate().X == -1)
+                    {
+                        DrawImage(e, row, col, mapErrorImage);
+                    }
+                }
+            }
+        }
+
+        private void DrawGrid(PaintEventArgs e)
+        {
+            Pen pen = new Pen(Color.DimGray, 1);
+            PointF start;
+            PointF end;
+            // Vertical lines
+            for (int col = 1; col < tileGrid.GetLength(0); col++)
+            {
+                start = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y);
+                end = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y + tileGrid.GetLength(1) * currentTileSize);
+                e.Graphics.DrawLine(pen, start, end);
+            }
+            // Horrizontal lines
+            for (int row = 1; row < tileGrid.GetLength(1); row++)
+            {
+                start = new PointF(mapOffset.X, mapOffset.Y + row * currentTileSize);
+                end = new PointF(mapOffset.X + tileGrid.GetLength(0) * currentTileSize, mapOffset.Y + row * currentTileSize);
+                e.Graphics.DrawLine(pen, start, end);
+            }
+        }
+
+        private void DrawImage(PaintEventArgs e, float row, float col, Image img)
+        {
+            e.Graphics.DrawImage(
+                img,
+                new Rectangle(
+                    (int)Math.Floor(col * currentTileSize + mapOffset.X),
+                    (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                    (int)Math.Ceiling(currentTileSize),
+                    (int)Math.Ceiling(currentTileSize)
+                ),
+                0,
+                0,
+                img.Width,
+                img.Height,
+                GraphicsUnit.Pixel,
+                GetAttributesForDrawing()
+            );
+        }
+
+        private void DrawImage(PaintEventArgs e, float row, float col, Image img, Point spriteSheetPosition)
+        {
+            e.Graphics.DrawImage(
+                img,
+                new Rectangle(
+                    (int)Math.Floor(col * currentTileSize + mapOffset.X),
+                    (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                    (int)Math.Ceiling(currentTileSize),
+                    (int)Math.Ceiling(currentTileSize)
+                ),
+                spriteSheetPosition.X * tileSize,
+                spriteSheetPosition.Y * tileSize,
+                tileSize,
+                tileSize,
+                GraphicsUnit.Pixel,
+                GetAttributesForDrawing()
+            );
+        }
+
+        private void DrawImage(PaintEventArgs e, float row, float col, Image img, Rectangle srcRect)
+        {
+            e.Graphics.DrawImage(
+                img,
+                new Rectangle(
+                    (int)Math.Floor(col * currentTileSize + mapOffset.X),
+                    (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                    (int)Math.Ceiling(srcRect.Width * zoom * 0.5f),
+                    (int)Math.Ceiling(srcRect.Height * zoom * 0.5f)
+                ),
+                srcRect.X,
+                srcRect.Y,
+                srcRect.Width,
+                srcRect.Height,
+                GraphicsUnit.Pixel,
+                GetAttributesForDrawing()
+            );
+        }
+
+        private ImageAttributes GetAttributesForDrawing()
+        {
             ImageAttributes attributes = new ImageAttributes();
             attributes.SetWrapMode(WrapMode.TileFlipXY);
 
-            // Draw every tile
-            Point p;
-            for (int col = 0; col < tileGrid.GetLength(0); col++) {
-                for (int row = 0; row < tileGrid.GetLength(1); row++) {
-                    //TODO maybe switch row and col
-
-                    // Coast tiles have an additional background layer
-                    if (tileGrid[col, row].GetTileType() == Tile.Type.Coast) {
-                        p = tileGrid[col, row].GetBackgroundCoordinate();
-
-                        e.Graphics.DrawImage(
-                            spriteSheet,
-                            new Rectangle(
-                                (int)Math.Floor(col * currentTileSize + mapOffset.X),
-                                (int)Math.Floor(row * currentTileSize + mapOffset.Y),
-                                (int)Math.Ceiling(currentTileSize),
-                                (int)Math.Ceiling(currentTileSize)
-                            ),
-                            p.X * tileSize,
-                            p.Y * tileSize,
-                            tileSize,
-                            tileSize,
-                            GraphicsUnit.Pixel,
-                            attributes
-                        );
-                    }
-
-                    // Draw the base layer of the tile
-                    p = tileGrid[col, row].GetSpritesheetCoordinate();
-                    if (p == null) {
-                        p.X = 8;
-                        p.Y = 8;
-                    }
-
-                    e.Graphics.DrawImage(
-                        spriteSheet,
-                        new Rectangle(
-                            (int)Math.Floor(col * currentTileSize + mapOffset.X), 
-                            (int)Math.Floor(row * currentTileSize + mapOffset.Y),
-                            (int)Math.Ceiling(currentTileSize), 
-                            (int)Math.Ceiling(currentTileSize)
-                        ),
-                        p.X * tileSize,
-                        p.Y * tileSize,
-                        tileSize,
-                        tileSize,
-                        GraphicsUnit.Pixel,
-                        attributes
-                    );
-
-                    // Draw the tree layer
-                    for (int i = 0; i < tileGrid[col, row].GetTreeCount(); i++) {
-                        e.Graphics.DrawImage(
-                            treeSheet,
-                            new Rectangle(
-                                (int)Math.Floor((col + i * 0.3f) * currentTileSize + mapOffset.X),
-                                (int)Math.Floor((row + i * 0.2f) * currentTileSize + mapOffset.Y),
-                                (int)Math.Ceiling(treeRect.Width * zoom * 0.5f),
-                                (int)Math.Ceiling(treeRect.Height * zoom * 0.5f)
-                            ),
-                            treeRect.X,
-                            treeRect.Y,
-                            treeRect.Width,
-                            treeRect.Height,
-                            GraphicsUnit.Pixel,
-                            attributes
-                        );
-                    }
-
-                    if (tileGrid[col, row].GetSpritesheetCoordinate().X == -1)
-                    {
-                        e.Graphics.DrawImage(
-                            mapErrorImage,
-                            new Rectangle(
-                                (int)Math.Floor(col * currentTileSize + mapOffset.X),
-                                (int)Math.Floor(row * currentTileSize + mapOffset.Y),
-                                (int)Math.Ceiling(currentTileSize),
-                                (int)Math.Ceiling(currentTileSize)
-                            ),
-                            0,
-                            0,
-                            mapErrorImage.Width,
-                            mapErrorImage.Height,
-                            GraphicsUnit.Pixel,
-                            attributes
-                        );
-                    }
-                }
-            }
-
-            // Draw grid lines
-            if (drawGrid) {
-                Pen pen = new Pen(Color.DimGray, 1);
-                PointF start;
-                PointF end;
-                // Vertical lines
-                for (int col = 1; col < tileGrid.GetLength(0); col++) {
-                    start = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y);
-                    end = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y + tileGrid.GetLength(1) * currentTileSize);
-                    e.Graphics.DrawLine(pen, start, end);
-                }
-                // Horrizontal lines
-                for (int row = 1; row < tileGrid.GetLength(1); row++) {
-                    start = new PointF(mapOffset.X, mapOffset.Y + row * currentTileSize);
-                    end = new PointF(mapOffset.X + tileGrid.GetLength(0) * currentTileSize, mapOffset.Y + row * currentTileSize);
-                    e.Graphics.DrawLine(pen, start, end);
-                }
-            }
+            return attributes;
         }
     }
 }

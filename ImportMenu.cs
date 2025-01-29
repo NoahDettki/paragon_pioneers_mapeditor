@@ -9,24 +9,9 @@ namespace ParagonPioneers {
             InitializeComponent();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void SubmitImportButton_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string input = textBox1.Text;
+            string input = textBox.Text;
 
             // Make sure that the input is not empty.
             if (input.Equals("")) {
@@ -70,6 +55,35 @@ namespace ParagonPioneers {
             
         }
 
+        private void FileImportButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+                Title = "Select a Text File"
+            };
+
+            // Show the dialog and check if a file is selected
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+
+                try
+                {
+                    // Read file content
+                    string fileContent = File.ReadAllText(filePath);
+
+                    // Display file content in a TextBox
+                    textBox.Text = fileContent;
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions, e.g., file access issues
+                    MessageBox.Show($"Error reading file: {ex.Message}");
+                }
+            }
+        }
+
         private void ShowImportMenu(object sender, FormClosedEventArgs e)
         {
             this.Show();
@@ -102,35 +116,6 @@ namespace ParagonPioneers {
             catch 
             {
                 return false;
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
-                Title = "Select a Text File"
-            };
-
-            // Show the dialog and check if a file is selected
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string filePath = openFileDialog.FileName;
-
-                try
-                {
-                    // Read file content
-                    string fileContent = File.ReadAllText(filePath);
-
-                    // Display file content in a TextBox
-                    textBox1.Text = fileContent;
-                }
-                catch (Exception ex)
-                {
-                    // Handle exceptions, e.g., file access issues
-                    MessageBox.Show($"Error reading file: {ex.Message}");
-                }
             }
         }
     }

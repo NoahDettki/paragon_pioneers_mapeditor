@@ -21,6 +21,7 @@ namespace ParagonPioneers
         private bool isDragging = false;
         private bool isPainting = false;
         private Point lastDragPoint;
+        private Point? lastPaintedTile;
         private Point dragOffset;
 
         private char selectedTile = 'W';
@@ -464,11 +465,8 @@ namespace ParagonPioneers
                 CalculateImageCoordinate(x + 1, y);
                 CalculateImageCoordinate(x, y - 1);
                 CalculateImageCoordinate(x, y + 1);
-                // Diagonal neighbours
-                CalculateImageCoordinate(x - 1, y - 1);
-                CalculateImageCoordinate(x - 1, y + 1);
-                CalculateImageCoordinate(x + 1, y - 1);
-                CalculateImageCoordinate(x + 1, y + 1);
+
+                lastPaintedTile = gridPos;
 
                 // The panel has to be drawn again to show the changes
                 mapPanel.Invalidate();
@@ -504,7 +502,7 @@ namespace ParagonPioneers
                 lastDragPoint = currentPos;
             }
 
-            if (isPainting)
+            if (isPainting && lastPaintedTile != mapPanel.MouseToGrid(e.Location))
             {
                 SetTileAt(e.Location);
             }
@@ -521,7 +519,6 @@ namespace ParagonPioneers
             }
             if (e.Button == MouseButtons.Left)
             {
-                SetTileAt(e.Location);
                 isPainting = false;
             }
         }
