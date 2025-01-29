@@ -5,9 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParagonPioneers {
-    internal class Tile {
-        public enum Type {
+namespace ParagonPioneers
+{
+    internal class Tile
+    {
+        public enum Type
+        {
             Land,
             Coast,
             Water,
@@ -22,51 +25,64 @@ namespace ParagonPioneers {
         private Point backgroundCoord;
         private bool mountainFlip;
 
-        public Tile(char c) {
+        public Tile(char c)
+        {
             Setup(c);
         }
 
-        public void SetTileType(Type type) {
+        public void SetTileType(Type type)
+        {
             this.type = type;
-            if (type != Type.Land) {
+            if (type != Type.Land)
+            {
                 treeCount = 0;
             }
         }
 
-        public Type GetTileType() {
+        public Type GetTileType()
+        {
             return type;
         }
 
-        public Point GetSpritesheetCoordinate() {
+        public Point GetSpritesheetCoordinate()
+        {
             return spriteCoord;
         }
 
-        public void SetSpritesheetCoordinate(Point coord) {
+        public void SetSpritesheetCoordinate(Point coord)
+        {
             this.spriteCoord = coord;
         }
 
-        public Point GetBackgroundCoordinate() {
+        public Point GetBackgroundCoordinate()
+        {
             return backgroundCoord;
         }
 
-        public void SetBackgroundCoordinate(Point coord) {
+        public void SetBackgroundCoordinate(Point coord)
+        {
             this.backgroundCoord = coord;
         }
 
-        public void IncreaseTrees() {
+        public void IncreaseTrees()
+        {
             treeCount++;
-            if (treeCount > 3) {
+            if (treeCount > 3)
+            {
                 treeCount = 0;
             }
             type = Type.Land;
         }
 
-        public int GetTreeCount() {
+        public int GetTreeCount()
+        {
             return treeCount;
         }
 
-        public static Tile.Type CharToType(char c) {
-            switch (c) {
+        public static Tile.Type CharToType(char c)
+        {
+            switch (c)
+            {
                 case 'W': return Type.Water;
                 case 'K': return Type.Coast;
                 case 'G': return Type.Mountain;
@@ -78,8 +94,10 @@ namespace ParagonPioneers {
             }
         }
 
-        public void Setup(char c) {
-            switch (c) {
+        public void Setup(char c)
+        {
+            switch (c)
+            {
                 case 'W':
                     type = Type.Water;
                     break;
@@ -92,7 +110,7 @@ namespace ParagonPioneers {
                 case '0':
                     type = Type.Land;
                     break;
-                case '1': 
+                case '1':
                     type = Type.Land;
                     treeCount = 1;
                     break;

@@ -4,8 +4,10 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
-namespace ParagonPioneers {
-    internal class MapPanel : Panel{
+namespace ParagonPioneers
+{
+    internal class MapPanel : Panel
+    {
         private Image spriteSheet;
         private Image treeSheet;
         private Image mapErrorImage;
@@ -18,13 +20,15 @@ namespace ParagonPioneers {
         private Rectangle treeRect;
         private bool drawGrid;
 
-        public MapPanel() {
+        public MapPanel()
+        {
             this.DoubleBuffered = true; // Prevents flickering
             treeRect = new Rectangle(0, 0, 82, 128);
             drawGrid = true;
         }
 
-        public void Initialize(Image spriteSheet, Image treeSheet, int tileSize, Tile[,] tileGrid, Image mapError) {
+        public void Initialize(Image spriteSheet, Image treeSheet, int tileSize, Tile[,] tileGrid, Image mapError)
+        {
             this.spriteSheet = spriteSheet;
             this.treeSheet = treeSheet;
             this.tileSize = tileSize;
@@ -36,37 +40,45 @@ namespace ParagonPioneers {
             isInitialized = true;
         }
 
-        public Point? MouseToGrid(Point mousePos) {
+        public Point? MouseToGrid(Point mousePos)
+        {
             Point gridPoint = new Point(
                 (int)((mousePos.X - mapOffset.X) / currentTileSize),
                 (int)((mousePos.Y - mapOffset.Y) / currentTileSize)
             );
-            if (gridPoint.X < 0 || gridPoint.Y < 0 || gridPoint.X >= tileGrid.GetLength(0) || gridPoint.Y >= tileGrid.GetLength(1)) {
+            if (gridPoint.X < 0 || gridPoint.Y < 0 || gridPoint.X >= tileGrid.GetLength(0) || gridPoint.Y >= tileGrid.GetLength(1))
+            {
                 return null;
-            } else return gridPoint;
+            }
+            else return gridPoint;
         }
 
-        public void SetTileGrid(Tile[,] grid) {
+        public void SetTileGrid(Tile[,] grid)
+        {
             tileGrid = grid;
             Invalidate();
         }
 
-        public void SetSpriteSheet(Image spriteSheet) {
+        public void SetSpriteSheet(Image spriteSheet)
+        {
             this.spriteSheet = spriteSheet;
             Invalidate();
         }
 
-        public void SetTreeSheet(Image treeSheet) {
+        public void SetTreeSheet(Image treeSheet)
+        {
             this.treeSheet = treeSheet;
             Invalidate();
         }
 
-        public void SetTileSize(int size) {
+        public void SetTileSize(int size)
+        {
             tileSize = size;
             Invalidate();
         }
 
-        public void ToggleGrid(bool toggle) {
+        public void ToggleGrid(bool toggle)
+        {
             this.drawGrid = toggle;
             Invalidate();
         }
@@ -87,29 +99,34 @@ namespace ParagonPioneers {
             Invalidate();
         }
 
-        public void Zoom(float delta, Point mousePos) {
+        public void Zoom(float delta, Point mousePos)
+        {
             float oldZoomLevel = zoom;
             zoom += delta;
-            if (zoom > 5f) {
+            if (zoom > 5f)
+            {
                 zoom = 5f;
             }
-            if (zoom < 0.1f) {
+            if (zoom < 0.1f)
+            {
                 zoom = 0.1f;
             }
             currentTileSize = tileSize * zoom;
 
             // The offset is calculated to keep the mouse position at the same point on the map
-            mapOffset.X = (float)mousePos.X - zoom / oldZoomLevel* (float)(mousePos.X - mapOffset.X);
+            mapOffset.X = (float)mousePos.X - zoom / oldZoomLevel * (float)(mousePos.X - mapOffset.X);
             mapOffset.Y = (float)mousePos.Y - zoom / oldZoomLevel * (float)(mousePos.Y - mapOffset.Y);
 
             Invalidate();
         }
 
-        protected override void OnPaint(PaintEventArgs e) {
+        protected override void OnPaint(PaintEventArgs e)
+        {
             base.OnPaint(e);
 
             // This is important especially for the [Design] view, because the images array will be empty at that point
-            if (isInitialized == false) {
+            if (isInitialized == false)
+            {
                 return;
             }
 
@@ -122,11 +139,14 @@ namespace ParagonPioneers {
 
             // Draw every tile
             Point p;
-            for (int col = 0; col < tileGrid.GetLength(0); col++) {
-                for (int row = 0; row < tileGrid.GetLength(1); row++) {
+            for (int col = 0; col < tileGrid.GetLength(0); col++)
+            {
+                for (int row = 0; row < tileGrid.GetLength(1); row++)
+                {
                     //TODO maybe switch row and col
 
-                    if (tileGrid[col, row].GetSpritesheetCoordinate().X == -1) {
+                    if (tileGrid[col, row].GetSpritesheetCoordinate().X == -1)
+                    {
                         e.Graphics.DrawImage(
                             mapErrorImage,
                             new Rectangle(
@@ -146,7 +166,8 @@ namespace ParagonPioneers {
                     }
 
                     // Water tiles have an additional background layer
-                    if (tileGrid[col, row].GetTileType() == Tile.Type.Coast) {
+                    if (tileGrid[col, row].GetTileType() == Tile.Type.Coast)
+                    {
                         p = tileGrid[col, row].GetBackgroundCoordinate();
 
                         e.Graphics.DrawImage(
@@ -168,7 +189,8 @@ namespace ParagonPioneers {
 
                     // Draw the base layer of the tile
                     p = tileGrid[col, row].GetSpritesheetCoordinate();
-                    if (p == null) {
+                    if (p == null)
+                    {
                         p.X = 8;
                         p.Y = 8;
                     }
@@ -176,9 +198,9 @@ namespace ParagonPioneers {
                     e.Graphics.DrawImage(
                         spriteSheet,
                         new Rectangle(
-                            (int)Math.Floor(col * currentTileSize + mapOffset.X), 
+                            (int)Math.Floor(col * currentTileSize + mapOffset.X),
                             (int)Math.Floor(row * currentTileSize + mapOffset.Y),
-                            (int)Math.Ceiling(currentTileSize), 
+                            (int)Math.Ceiling(currentTileSize),
                             (int)Math.Ceiling(currentTileSize)
                         ),
                         p.X * tileSize,
@@ -190,7 +212,8 @@ namespace ParagonPioneers {
                     );
 
                     // Draw the tree layer
-                    for (int i = 0; i < tileGrid[col, row].GetTreeCount(); i++) {
+                    for (int i = 0; i < tileGrid[col, row].GetTreeCount(); i++)
+                    {
                         e.Graphics.DrawImage(
                             treeSheet,
                             new Rectangle(
@@ -211,18 +234,21 @@ namespace ParagonPioneers {
             }
 
             // Draw grid lines
-            if (drawGrid) {
+            if (drawGrid)
+            {
                 Pen pen = new Pen(Color.DimGray, 1);
                 PointF start;
                 PointF end;
                 // Vertical lines
-                for (int col = 1; col < tileGrid.GetLength(0); col++) {
+                for (int col = 1; col < tileGrid.GetLength(0); col++)
+                {
                     start = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y);
                     end = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y + tileGrid.GetLength(1) * currentTileSize);
                     e.Graphics.DrawLine(pen, start, end);
                 }
                 // Horrizontal lines
-                for (int row = 1; row < tileGrid.GetLength(1); row++) {
+                for (int row = 1; row < tileGrid.GetLength(1); row++)
+                {
                     start = new PointF(mapOffset.X, mapOffset.Y + row * currentTileSize);
                     end = new PointF(mapOffset.X + tileGrid.GetLength(0) * currentTileSize, mapOffset.Y + row * currentTileSize);
                     e.Graphics.DrawLine(pen, start, end);

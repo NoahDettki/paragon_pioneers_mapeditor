@@ -3,9 +3,12 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace ParagonPioneers {
-    public partial class ImportMenu : Form {
-        public ImportMenu() {
+namespace ParagonPioneers
+{
+    public partial class ImportMenu : Form
+    {
+        public ImportMenu()
+        {
             InitializeComponent();
         }
 
@@ -29,13 +32,15 @@ namespace ParagonPioneers {
             string input = textBox1.Text;
 
             // Make sure that the input is not empty.
-            if (input.Equals("")) {
+            if (input.Equals(""))
+            {
                 MessageBox.Show("Import field is empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             // Validate the input. Only specific characters are allowed.
-            if (!IsValidInput(input)) {
+            if (!IsValidInput(input))
+            {
                 MessageBox.Show("Your data is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -45,10 +50,12 @@ namespace ParagonPioneers {
             int firstLineLength = lines[0].TrimEnd('\r').Length; // Windows is weird. Trim '\r' from the first line
             Console.WriteLine(firstLineLength);
 
-            foreach (string l in lines) {
+            foreach (string l in lines)
+            {
                 int lineLength = l.TrimEnd('\r').Length; // Windows is still weird. Trim '\r' from each line
                 Console.WriteLine(lineLength);
-                if (lineLength != firstLineLength) {
+                if (lineLength != firstLineLength)
+                {
                     MessageBox.Show("Every line must have the same number of characters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -67,7 +74,7 @@ namespace ParagonPioneers {
             this.Hide();
 
             map.FormClosed += ShowImportMenu;
-            
+
         }
 
         private void ShowImportMenu(object sender, FormClosedEventArgs e)
@@ -99,7 +106,7 @@ namespace ParagonPioneers {
                 //returns if the json string only contains W K G 0 1 2 3
                 return Regex.IsMatch(data, @"^[WKG0123\n\r]*$");
             }
-            catch 
+            catch
             {
                 return false;
             }
