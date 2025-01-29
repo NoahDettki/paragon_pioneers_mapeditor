@@ -25,7 +25,7 @@ namespace ParagonPioneers
 
         private char selectedTile = 'W';
 
-        private Image mapErrorImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "MapError.jpg"));
+        private Image mapErrorImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "MapError.png"));
         private Image tileSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Background_Tiles.png"));
         private Image treeSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "World_Environment.png"));
         private Image toggleGridOn = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "ToggleGridOn.png"));
@@ -222,15 +222,16 @@ namespace ParagonPioneers
                 int coastDirection = GetNeighboursOfType(Tile.Type.Coast, point);
                 int waterNeighbour = GetNeighboursOfType(Tile.Type.Water, point, true);
                 int landNeighbour = GetNeighboursOfType(Tile.Type.Land, point);
+                int mountainNeighbour = GetNeighboursOfType(Tile.Type.Mountain, point);
 
                 if (HasOneNeighbour(coastDirection) || coastDirection == 0)
                 {
                     tileGrid[x, y].SetSpritesheetCoordinate(new Point(-1, -1));
-                    tileGrid[x, y].SetBackgroundCoordinate(new Point(-1, -1));
+                    tileGrid[x, y].SetBackgroundCoordinate(new Point(1, 2));
                     return;
                 }
 
-                if (IsOposite(waterNeighbour, landNeighbour) && (coastDirection == 3 || coastDirection == 12))
+                if ((IsOposite(waterNeighbour, landNeighbour) || IsOposite(waterNeighbour, landNeighbour)) && (coastDirection == 3 || coastDirection == 12))
                 {
                     tileGrid[x, y].SetSpritesheetCoordinate(GetStraightCoastPoint(waterNeighbour, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetStraightCoastPoint(waterNeighbour));
@@ -240,7 +241,7 @@ namespace ParagonPioneers
                     tileGrid[x, y].SetSpritesheetCoordinate(GetOuterCornerCoastPoint(coastDirection, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetOuterCornerCoastPoint(coastDirection));
                 }
-                else if (landNeighbour == 0)
+                else if (landNeighbour == 0 && mountainNeighbour == 0)
                 {
                     tileGrid[x, y].SetSpritesheetCoordinate(GetInnerCornerCoastPoint(coastDirection, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetInnerCornerCoastPoint(coastDirection));
@@ -312,6 +313,7 @@ namespace ParagonPioneers
                     return new Point(3, 3);
                 if (coast == 10)
                     return new Point(3, 2);
+                return new Point(1, 2);
             } else
             {
                 if (coast == 5)
@@ -322,8 +324,8 @@ namespace ParagonPioneers
                     return new Point(4, 7);
                 if (coast == 10)
                     return new Point(4, 6);
+                return new Point(-1, -1);
             }
-            return new Point(-1, -1);
         }
 
         private Point GetOuterCornerCoastPoint(int coast, bool useWaterSprite = false)
@@ -338,6 +340,7 @@ namespace ParagonPioneers
                     return new Point(0, 4);
                 if (coast == 10)
                     return new Point(0, 2);
+                return new Point(1, 2);
             }
             else
             {
@@ -349,8 +352,8 @@ namespace ParagonPioneers
                     return new Point(0, 7);
                 if (coast == 10)
                     return new Point(0, 5);
+                return new Point(-1, -1);
             }
-            return new Point(-1, -1);
         }
 
         private bool IsOposite(int a, int b)
@@ -370,6 +373,7 @@ namespace ParagonPioneers
                     return new Point(2, 3);
                 if (water == 8)
                     return new Point(0, 3);
+                return new Point(1, 2);
             } else
             {
                 if (water == 1)
@@ -380,8 +384,8 @@ namespace ParagonPioneers
                     return new Point(2, 6);
                 if (water == 8)
                     return new Point(0, 6);
+                return new Point(-1, -1);
             }
-            return new Point();
         }
 
         private int GetNeighboursOfType(Tile.Type type, Point pos, bool countNoneAsTile = false)

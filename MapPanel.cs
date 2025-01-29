@@ -117,7 +117,7 @@ namespace ParagonPioneers {
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
             e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.None;
 
-            var attributes = new ImageAttributes();
+            ImageAttributes attributes = new ImageAttributes();
             attributes.SetWrapMode(WrapMode.TileFlipXY);
 
             // Draw every tile
@@ -126,26 +126,7 @@ namespace ParagonPioneers {
                 for (int row = 0; row < tileGrid.GetLength(1); row++) {
                     //TODO maybe switch row and col
 
-                    if (tileGrid[col, row].GetSpritesheetCoordinate().X == -1) {
-                        e.Graphics.DrawImage(
-                            mapErrorImage,
-                            new Rectangle(
-                                (int)Math.Floor(col * currentTileSize + mapOffset.X),
-                                (int)Math.Floor(row * currentTileSize + mapOffset.Y),
-                                (int)Math.Ceiling(currentTileSize),
-                                (int)Math.Ceiling(currentTileSize)
-                            ),
-                            0,
-                            0,
-                            mapErrorImage.Width,
-                            mapErrorImage.Height,
-                            GraphicsUnit.Pixel,
-                            attributes
-                        );
-                        continue;
-                    }
-
-                    // Water tiles have an additional background layer
+                    // Coast tiles have an additional background layer
                     if (tileGrid[col, row].GetTileType() == Tile.Type.Coast) {
                         p = tileGrid[col, row].GetBackgroundCoordinate();
 
@@ -203,6 +184,25 @@ namespace ParagonPioneers {
                             treeRect.Y,
                             treeRect.Width,
                             treeRect.Height,
+                            GraphicsUnit.Pixel,
+                            attributes
+                        );
+                    }
+
+                    if (tileGrid[col, row].GetSpritesheetCoordinate().X == -1)
+                    {
+                        e.Graphics.DrawImage(
+                            mapErrorImage,
+                            new Rectangle(
+                                (int)Math.Floor(col * currentTileSize + mapOffset.X),
+                                (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                                (int)Math.Ceiling(currentTileSize),
+                                (int)Math.Ceiling(currentTileSize)
+                            ),
+                            0,
+                            0,
+                            mapErrorImage.Width,
+                            mapErrorImage.Height,
                             GraphicsUnit.Pixel,
                             attributes
                         );
