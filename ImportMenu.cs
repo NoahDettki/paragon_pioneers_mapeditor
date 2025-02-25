@@ -61,6 +61,26 @@ namespace ParagonPioneers
                 }
             }
 
+            // Make sure that all mountain ranges are valid. Each mountain tile must have exactly two neighbours.
+            for (int y = 0; y < lines.Length; y++) 
+            {
+                for (int x = 0; x < lines[y].Length; x++) 
+                {
+                    if (lines[y][x] == 'G')
+                    {
+                        int neighbourCount = 0;
+                        if (y > 0 && lines[y - 1][x] == 'G') neighbourCount++;
+                        if (y < lines.Length - 1 && lines[y + 1][x] == 'G') neighbourCount++;
+                        if (x > 0 && lines[y][x - 1] == 'G') neighbourCount++;
+                        if (x < lines[y].Length - 1 && lines[y][x + 1] == 'G') neighbourCount++;
+                        if (neighbourCount != 2) {
+                            MessageBox.Show("Each mountain tile must have exactly two neighbours.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                }
+            }
+
             // The input is now definitively valid
 
 
