@@ -25,6 +25,7 @@ namespace ParagonPioneers
         private bool mountainMode = false;
         private List<Point> mountainRange;
         private List<List<Point>> allMountainRanges;
+        private List<Point> allMountainTiles; // only needed for loading
 
         private char selectedTile = ' ';
         private bool showMountainTutorial = true;
@@ -161,7 +162,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                 }
             }
             // Calculate all mountain ranges
-            List<Point> allMountainTiles = new List<Point>();
+            allMountainTiles = new List<Point>();
             for (int col = 0; col < cols; col++) 
             {
                 for (int row = 0; row < rows; row++) 
@@ -187,12 +188,13 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             if (tileGrid[x, y].GetTileType() != Tile.Type.Mountain) return;
 
             bool wasAdded = TryAddToMountainRange(x, y);
+            if (!wasAdded) return;
+            allMountainTiles.Add(new Point(x, y));
 
             // If the last mountain completed the range then the mountain mode will be set to false
             if (!mountainMode) return;
 
             // Only look at neighbours if the current tile was added
-            if (!wasAdded) return;
             FindNextMountainTile(x - 1, y);
             FindNextMountainTile(x, y - 1);
             FindNextMountainTile(x + 1, y);
@@ -748,7 +750,6 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             // The tile can be added
             mountainRange.Add(new Point(x, y));
             tileGrid[x, y].SetSpritesheetCoordinate(new Point(3, 0));
-            Console.WriteLine("Mountains: " + mountainRange.Count); // TODO: Remove
 
             // If the newly added tile is a neighbour of the first tile (and the list is longer than 2 tiles),
             // then the mountain range is complete.
@@ -978,6 +979,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                         tiles[p.X, p.Y] = '0';
                     }
                     allMountainRanges.Remove(range);
+                    Console.WriteLine("Number of mountain ranges left: " + allMountainRanges.Count);
                     return;
                 }
             }
