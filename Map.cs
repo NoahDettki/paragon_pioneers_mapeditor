@@ -133,9 +133,9 @@ First draw a complete ring. You can then decide if the ring should form a mounta
 
             // -- Panel settings end -----------------------------
 
+            allMountainRanges = new List<List<Point>>();
             PopulateGrid();
             mapPanel.Initialize(tileSpritesheet, treeSpritesheet, SPRITE_SIZE, tileGrid, mapErrorImage);
-            allMountainRanges = new List<List<Point>>();
         }
 
         private void PopulateGrid()
@@ -143,6 +143,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             int cols = tiles.GetLength(0);
             int rows = tiles.GetLength(1);
 
+            // Set the correct Tile at each position
             for (int col = 0; col < cols; col++)
             {
                 for (int row = 0; row < rows; row++)
@@ -150,6 +151,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     tileGrid[col, row] = new Tile(tiles[col, row]);
                 }
             }
+            // Calculate the correct sprite at each position
+            // (All tiles have to be set before this can happen)
             for (int col = 0; col < cols; col++)
             {
                 for (int row = 0; row < rows; row++)
@@ -157,6 +160,43 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     CalculateImageCoordinate(col, row);
                 }
             }
+            // Calculate all mountain ranges
+            List<Point> allMountainTiles = new List<Point>();
+            for (int col = 0; col < cols; col++) 
+            {
+                for (int row = 0; row < rows; row++) 
+                {
+                    if (tileGrid[col, row].GetTileType() == Tile.Type.Mountain)
+                    {
+                        // Handle all mountain tiles only once
+                        if (allMountainTiles.Contains(new Point(col, row))) {
+                            continue;
+                        }
+                        // This tile was not handled yet which means that this is the first of
+                        // a new mountain range
+                        StartMountainMode();
+                        FindNextMountainTile(col, row);
+                    }
+                }
+            }
+        }
+
+        private void FindNextMountainTile(int x, int y) 
+        {
+            if (!IsInbounds(x, y)) return;
+            if (tileGrid[x, y].GetTileType() != Tile.Type.Mountain) return;
+
+            bool wasAdded = TryAddToMountainRange(x, y);
+
+            // If the last mountain completed the range then the mountain mode will be set to false
+            if (!mountainMode) return;
+
+            // Only look at neighbours if the current tile was added
+            if (!wasAdded) return;
+            FindNextMountainTile(x - 1, y);
+            FindNextMountainTile(x, y - 1);
+            FindNextMountainTile(x + 1, y);
+            FindNextMountainTile(x, y + 1);
         }
 
 
@@ -682,27 +722,27 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             selectedTile = ' ';
         }
 
-        private void TryAddToMountainRange(int x, int y)
+        private bool TryAddToMountainRange(int x, int y)
         {
             // The first tile can always be added
             if (mountainRange.Count == 0)
             {
                 mountainRange.Add(new Point(x, y));
                 tileGrid[x, y].SetSpritesheetCoordinate(new Point(3, 0));
-                return;
+                return true;
             }
 
             // Every other tile has to be a neighbour of the last tile
             Point last = mountainRange[mountainRange.Count - 1];
             if (Math.Abs(last.X - x) + Math.Abs(last.Y - y) != 1)
             {
-                return;
+                return false;
             }
 
             // The tile is a neighbour but may already be in the list
             if (mountainRange.Contains(new Point(x, y)))
             {
-                return;
+                return false;
             }
 
             // The tile can be added
@@ -724,6 +764,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                 allMountainRanges.Add(mountainRange);
                 EndMountainMode();
             }
+            return true;
         }
 
         /// <summary>
