@@ -1,13 +1,9 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.CodeDom;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
 namespace ParagonPioneers
 {
@@ -23,11 +19,12 @@ namespace ParagonPioneers
         private bool isPainting = false;
         private Point lastDragPoint;
         private Point dragOffset;
+        private Point lastPaintedTile = new Point(-1, -1);
 
         // Mountain placement
         private bool mountainMode = false;
         private List<Point> mountainRange;
-        private int mountainRangeAngle;
+        private List<List<Point>> allMountainRanges;
 
         private char selectedTile = ' ';
         private bool showMountainTutorial = true;
@@ -93,26 +90,6 @@ namespace ParagonPioneers
             [Tile.Type.Land] = new[] {
                 new Point(1, 1),
             },
-            // Mountain sprites
-            [Tile.Type.Mountain] = new[] {
-                //new Point(-1, -1),  // ____
-                //new Point(-1, -1),  // T___
-                //new Point(-1, -1),  // _B__
-                new Point(0, 10),   // TB__ or (2, 10)
-                //new Point(-1, -1),  // __L_
-                new Point(2, 11),   // T_L_ or (4, 10)
-                new Point(2, 9),    // _BL_ or (4, 9)
-                //new Point(-1, -1),  // TBL_
-                //new Point(-1, -1),  // ___R
-                new Point(0, 11),   // T__R or (3, 10)
-                new Point(0, 9),    // _B_R or (3, 9)
-                //new Point(-1, -1),  // TB_R
-                new Point(1, 11),   // __LR or (1, 9)
-                //new Point(-1, -1),  // T_LR
-                //new Point(-1, -1),  // _BLR
-                //new Point(-1, -1),  // TBLR
-            },
-
         };
 
         private const string MOUNTAIN_TUTORIAL_MESSAGE = @"How to add mountains: 
@@ -158,6 +135,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
 
             PopulateGrid();
             mapPanel.Initialize(tileSpritesheet, treeSpritesheet, SPRITE_SIZE, tileGrid, mapErrorImage);
+            allMountainRanges = new List<List<Point>>();
         }
 
         private void PopulateGrid()
@@ -275,56 +253,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
 
             if (type == Tile.Type.Mountain)
             {
-                //// check neighbours
-                //bool top = IsTypeAt(x, y - 1, Tile.Type.Mountain);
-                //bool bottom = IsTypeAt(x, y + 1, Tile.Type.Mountain);
-                //bool left = IsTypeAt(x - 1, y, Tile.Type.Mountain);
-                //bool right = IsTypeAt(x + 1, y, Tile.Type.Mountain);
-
-                //// choose the correct sprite
-                //int spriteId = 0;
-                //spriteId += top ? 1 : 0;
-                //spriteId += bottom ? 2 : 0;
-                //spriteId += left ? 4 : 0;
-                //spriteId += right ? 8 : 0;
-                //tileGrid[x, y].SetSpritesheetCoordinate(spritesheetCoordinates[type][spriteId]);
-
-                //// there are many special cases that require further investigation
-                //if (spriteId == 3)
-                //{
-                //    // TB__ can also be (2, 10)
-                //    int i = y;
-                //    while (true)
-                //    {
-                //        i++;
-                //        if (!IsInbounds(x, i)) break;
-
-                //        Point p = tileGrid[x, i].GetSpritesheetCoordinate();
-                //        if (p.X == 2 && p.Y == 11)
-                //        {
-                //            tileGrid[x, y].SetSpritesheetCoordinate(new Point(2, 10));
-                //            break;
-                //        }
-                //    }
-                //}
-                //if (spriteId == 12)
-                //{
-                //    // __LR can also be (1, 9)
-                //    int i = x;
-                //    while (true)
-                //    {
-                //        i++;
-                //        if (!IsInbounds(i, y)) break;
-
-                //        Point p = tileGrid[i, y].GetSpritesheetCoordinate();
-                //        if (p.X == 2 && p.Y == 9)
-                //        {
-                //            tileGrid[x, y].SetSpritesheetCoordinate(new Point(1, 9));
-                //            break;
-                //        }
-                //    }
-                //}
-
+                // Mountain sprites are only handled in the mountain mode
+                return;
             }
         }
 
@@ -485,8 +415,21 @@ First draw a complete ring. You can then decide if the ring should form a mounta
 
             if (gridPos != null)
             {
+                // Prevent the continuous painting from painting the same tile over and over
+                if (lastPaintedTile == gridPos)
+                {
+                    return;
+                }
+                lastPaintedTile = (Point)gridPos;
+
                 int x = gridPos.Value.X;
                 int y = gridPos.Value.Y;
+
+                // If the overridden tile is a mountain tile, then all tiles of the mountain range have to be removed
+                if (tileGrid[x, y].GetTileType() == Tile.Type.Mountain)
+                {
+                    RemoveMountainTile((Point)gridPos);
+                }
 
                 // Trees work a little different than the other tiles
                 if (selectedTile == '1')
@@ -515,11 +458,6 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                 CalculateImageCoordinate(x + 1, y);
                 CalculateImageCoordinate(x, y - 1);
                 CalculateImageCoordinate(x, y + 1);
-                // Diagonal neighbours
-                //CalculateImageCoordinate(x - 1, y - 1);
-                //CalculateImageCoordinate(x - 1, y + 1);
-                //CalculateImageCoordinate(x + 1, y - 1);
-                //CalculateImageCoordinate(x + 1, y + 1);
 
                 // The panel has to be drawn again to show the changes
                 mapPanel.Invalidate();
@@ -582,6 +520,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             {
                 SetTileAt(e.Location);
                 isPainting = false;
+                lastPaintedTile = new Point(-1, -1);
             }
         }
 
@@ -734,7 +673,6 @@ First draw a complete ring. You can then decide if the ring should form a mounta
         {
             mountainMode = true;
             mountainRange = new List<Point>();
-            mountainRangeAngle = 0;
             selectedTile = 'G';
         }
 
@@ -782,7 +720,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                 int rotation = CalculateMountainRangeRotation();
                 // 360° means the user drew the mountain range clockwise, -360° means counter-clockwise
                 SetMountainRangeSprites(rotation);
-
+                // Add the new mountain range to the list of all mountain ranges
+                allMountainRanges.Add(mountainRange);
                 EndMountainMode();
             }
         }
@@ -976,6 +915,29 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                             tileGrid[current.X, current.Y].SetSpritesheetCoordinate(rotation == 360 ? new Point(3, 10) : new Point(0, 11));
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Unlike other tiles, a single mountain tile can not be overdrawn. Instead, the whole mountain range has to be removed.
+        /// </summary>
+        /// <param name="point">The mountain tile position that was overdrawn</param>
+        private void RemoveMountainTile(Point point)
+        {
+            // Search through all mountain ranges and remove all mountain tiles of the range that contains this point
+            foreach (List<Point> range in allMountainRanges)
+            {
+                if (range.Contains(point))
+                {
+                    foreach (Point p in range)
+                    {
+                        tileGrid[p.X, p.Y].SetTileType(Tile.Type.Land);
+                        tileGrid[p.X, p.Y].SetSpritesheetCoordinate(new Point(1, 1));
+                        tiles[p.X, p.Y] = '0';
+                    }
+                    allMountainRanges.Remove(range);
+                    return;
                 }
             }
         }
