@@ -68,6 +68,7 @@ namespace ParagonPioneers
 
 
             char[,] dataArray = DataToArray(input);
+            Console.WriteLine(dataArray[1, 2]); // TODO: Remove this line
 
             //show map form and pass the validated array
             Map map = new Map(dataArray);
@@ -117,15 +118,15 @@ namespace ParagonPioneers
         private char[,] DataToArray(string data)
         {
             // Split the input into lines
-            string[] rows = data.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = data.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
-            char[,] result = new char[rows.Length, rows[0].Length];
+            char[,] result = new char[lines[0].Length, lines.Length];
 
-            for (int i = 0; i < rows.Length; i++)
+            for (int y = 0; y < lines.Length; y++)
             {
-                for (int j = 0; j < rows[i].Length; j++)
+                for (int x = 0; x < lines[y].Length; x++)
                 {
-                    result[i, j] = rows[i][j];
+                    result[x, y] = lines[y][x];
                 }
             }
             return result;

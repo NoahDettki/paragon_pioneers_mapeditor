@@ -140,39 +140,33 @@ namespace ParagonPioneers
 
         private void DrawGridTiles(PaintEventArgs e)
         {
-            for (int col = 0; col < tileGrid.GetLength(1); col++)
+            for (int y = 0; y < tileGrid.GetLength(1); y++)
             {
-                for (int row = 0; row < tileGrid.GetLength(0); row++)
+                for (int x = 0; x < tileGrid.GetLength(0); x++)
                 {
                     //TODO maybe switch row and col
 
-                    Tile tile = tileGrid[row, col];
+                    Tile tile = tileGrid[x, y];
 
                     // Draw additional background layer for coast
                     if (tile.IsTileType(Tile.Type.Coast))
                     {
-                        DrawImage(e, row, col, spriteSheet, tile.GetBackgroundCoordinate());
+                        DrawImage(e, x, y, spriteSheet, tile.GetBackgroundCoordinate());
                     }
 
-                    //spriteSheetPosition = tile.GetSpritesheetCoordinate();
-                    //if (spriteSheetPosition == null) {
-                    //    spriteSheetPosition.X = 8;
-                    //    spriteSheetPosition.Y = 8;
-                    //}
-
                     // Draw the base layer of the tile
-                    DrawImage(e, row, col, spriteSheet, tile.GetSpritesheetCoordinate());
+                    DrawImage(e, x, y, spriteSheet, tile.GetSpritesheetCoordinate());
 
                     // Draw the tree layer
                     for (int i = 0; i < tile.GetTreeCount(); i++)
                     {
-                        DrawImage(e, row + i * 0.2f, col + i * 0.3f, treeSheet, treeRect);
+                        DrawImage(e, x + i * 0.2f, y + i * 0.3f, treeSheet, treeRect);
                     }
 
                     // Draw Error Image
                     if (tile.GetSpritesheetCoordinate().X == -1)
                     {
-                        DrawImage(e, row, col, mapErrorImage);
+                        DrawImage(e, x, y, mapErrorImage);
                     }
                 }
             }
@@ -199,13 +193,13 @@ namespace ParagonPioneers
             }
         }
 
-        private void DrawImage(PaintEventArgs e, float row, float col, Image img)
+        private void DrawImage(PaintEventArgs e, float x, float y, Image img)
         {
             e.Graphics.DrawImage(
                 img,
                 new Rectangle(
-                    (int)Math.Floor(col * currentTileSize + mapOffset.X),
-                    (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                    (int)Math.Floor(x * currentTileSize + mapOffset.X),
+                    (int)Math.Floor(y * currentTileSize + mapOffset.Y),
                     (int)Math.Ceiling(currentTileSize),
                     (int)Math.Ceiling(currentTileSize)
                 ),
@@ -218,13 +212,13 @@ namespace ParagonPioneers
             );
         }
 
-        private void DrawImage(PaintEventArgs e, float row, float col, Image img, Point spriteSheetPosition)
+        private void DrawImage(PaintEventArgs e, float x, float y, Image img, Point spriteSheetPosition)
         {
             e.Graphics.DrawImage(
                 img,
                 new Rectangle(
-                    (int)Math.Floor(col * currentTileSize + mapOffset.X),
-                    (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                    (int)Math.Floor(x * currentTileSize + mapOffset.X),
+                    (int)Math.Floor(y * currentTileSize + mapOffset.Y),
                     (int)Math.Ceiling(currentTileSize),
                     (int)Math.Ceiling(currentTileSize)
                 ),
@@ -237,13 +231,13 @@ namespace ParagonPioneers
             );
         }
 
-        private void DrawImage(PaintEventArgs e, float row, float col, Image img, Rectangle srcRect)
+        private void DrawImage(PaintEventArgs e, float x, float y, Image img, Rectangle srcRect)
         {
             e.Graphics.DrawImage(
                 img,
                 new Rectangle(
-                    (int)Math.Floor(col * currentTileSize + mapOffset.X),
-                    (int)Math.Floor(row * currentTileSize + mapOffset.Y),
+                    (int)Math.Floor(x * currentTileSize + mapOffset.X),
+                    (int)Math.Floor(y * currentTileSize + mapOffset.Y),
                     (int)Math.Ceiling(srcRect.Width * zoom * 0.5f),
                     (int)Math.Ceiling(srcRect.Height * zoom * 0.5f)
                 ),

@@ -21,7 +21,6 @@ namespace ParagonPioneers
         private Point lastDragPoint;
         private Point? lastPaintedTile;
         private Point dragOffset;
-        private Point lastPaintedTile = new Point(-1, -1);
 
         // Mountain placement
         private bool mountainMode = false;
@@ -143,45 +142,47 @@ First draw a complete ring. You can then decide if the ring should form a mounta
 
         private void PopulateGrid() 
         {
-            int rows = tiles.GetLength(0);
-            int cols = tiles.GetLength(1);
+            int cols = tiles.GetLength(0);
+            int rows = tiles.GetLength(1);
 
             // Set the correct Tile at each position
-            for (int row = 0; row < rows; row++) 
+            for (int y = 0; y < rows; y++) 
             {                
-                for (int col = 0; col < cols; col++) 
+                for (int x = 0; x < cols; x++) 
                 {
-                    tileGrid[col, row] = new Tile(tiles[col, row]);
+                    tileGrid[x, y] = new Tile(tiles[x, y]);
                 }
             }
             // Calculate the correct sprite at each position
             // (All tiles have to be set before this can happen)
-            for (int row = 0; row < rows; row++) 
+            for (int y = 0; y < rows; y++) 
             {
-                for (int col = 0; col < cols; col++)
+                for (int x = 0; x < cols; x++)
                 {
-                    CalculateImageCoordinate(col, row);
+                    CalculateImageCoordinate(x, y);
                 }
             }
             // Calculate all mountain ranges
             allMountainTiles = new List<Point>();
-            for (int row = 0; row < rows; row++) 
+            for (int y = 0; y < rows; y++) 
             {
-                for (int col = 0; col < cols; col++) 
+                for (int x = 0; x < cols; x++) 
                 {
-                    if (tileGrid[col, row].GetTileType() == Tile.Type.Mountain)
+                    if (tileGrid[x, y].GetTileType() == Tile.Type.Mountain)
                     {
                         // Handle all mountain tiles only once
-                        if (allMountainTiles.Contains(new Point(col, row))) {
+                        if (allMountainTiles.Contains(new Point(x, y))) {
                             continue;
                         }
                         // This tile was not handled yet which means that this is the first of
                         // a new mountain range
                         StartMountainMode();
-                        FindNextMountainTile(col, row);
+                        FindNextMountainTile(x, y);
                     }
                 }
             }
+            Console.WriteLine(tileGrid[1, 2].GetTileType()); // TODO: Remove this line
+            Console.WriteLine(tiles[1, 2]); // TODO: Remove this line
         }
 
         private void FindNextMountainTile(int x, int y) 
