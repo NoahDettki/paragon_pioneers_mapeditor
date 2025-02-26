@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -148,17 +149,21 @@ namespace ParagonPioneers
         }
 
         private void PopulateGrid() {
-            int cols = tiles.GetLength(0);
-            int rows = tiles.GetLength(1);
+            int rows = tiles.GetLength(0);
+            int cols = tiles.GetLength(1);
 
-            for (int col = 0; col < cols; col++) {
-                for (int row = 0; row < rows; row++) {
-                    tileGrid[col, row] = new Tile(tiles[col, row]);
+            for (int row = 0; row < rows; row++) 
+            {                
+                for (int col = 0; col < cols; col++) 
+                {
+                    tileGrid[row, col] = new Tile(tiles[row, col]);
                 }
             }
-            for (int col = 0; col < cols; col++) {
-                for (int row = 0; row < rows; row++) {
-                    CalculateImageCoordinate(col, row);
+            for (int row = 0; row < rows; row++) 
+            {
+                for (int col = 0; col < cols; col++)
+                {
+                    CalculateImageCoordinate(row, col);
                 }
             }
         }

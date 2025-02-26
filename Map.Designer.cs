@@ -29,46 +29,21 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Map));
-            this.mapPanel = new ParagonPioneers.MapPanel();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.mountainButton = new System.Windows.Forms.Button();
             this.coastButton = new System.Windows.Forms.Button();
             this.treeButton = new System.Windows.Forms.Button();
             this.exportButton = new System.Windows.Forms.Button();
             this.landButton = new System.Windows.Forms.Button();
             this.waterButton = new System.Windows.Forms.Button();
-            this.mountainButton = new System.Windows.Forms.Button();
-            this.mapPanel.SuspendLayout();
+            this.mapPanel = new ParagonPioneers.MapPanel();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
+            this.mapPanel.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // mapPanel
-            // 
-            this.mapPanel.Controls.Add(this.checkBox1);
-            this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mapPanel.Location = new System.Drawing.Point(0, 0);
-            this.mapPanel.Margin = new System.Windows.Forms.Padding(0);
-            this.mapPanel.Name = "mapPanel";
-            this.mapPanel.Size = new System.Drawing.Size(800, 450);
-            this.mapPanel.TabIndex = 2;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("checkBox1.BackgroundImage")));
-            this.checkBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(0, 0);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(25, 25);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.GridOption_Toggle);
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.mountainButton);
@@ -77,13 +52,26 @@
             this.panel1.Controls.Add(this.exportButton);
             this.panel1.Controls.Add(this.landButton);
             this.panel1.Controls.Add(this.waterButton);
-            this.panel1.Location = new System.Drawing.Point(728, 12);
+            this.panel1.Location = new System.Drawing.Point(728, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(60, 426);
+            this.panel1.Size = new System.Drawing.Size(60, 444);
             this.panel1.TabIndex = 1;
+            // 
+            // mountainButton
+            // 
+            this.mountainButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.mountainButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("mountainButton.BackgroundImage")));
+            this.mountainButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.mountainButton.Location = new System.Drawing.Point(4, 227);
+            this.mountainButton.Name = "mountainButton";
+            this.mountainButton.Size = new System.Drawing.Size(50, 50);
+            this.mountainButton.TabIndex = 5;
+            this.mountainButton.UseVisualStyleBackColor = true;
+            this.mountainButton.Click += new System.EventHandler(this.mountainButton_Click);
             // 
             // coastButton
             // 
+            this.coastButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.coastButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.coastButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("coastButton.BackgroundImage")));
             this.coastButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
@@ -97,6 +85,7 @@
             // 
             // treeButton
             // 
+            this.treeButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.treeButton.BackColor = System.Drawing.Color.ForestGreen;
             this.treeButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("treeButton.BackgroundImage")));
             this.treeButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
@@ -110,11 +99,12 @@
             // 
             // exportButton
             // 
+            this.exportButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.exportButton.BackColor = System.Drawing.Color.Red;
             this.exportButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("exportButton.BackgroundImage")));
             this.exportButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.exportButton.ForeColor = System.Drawing.Color.White;
-            this.exportButton.Location = new System.Drawing.Point(4, 371);
+            this.exportButton.Location = new System.Drawing.Point(4, 389);
             this.exportButton.Name = "exportButton";
             this.exportButton.Size = new System.Drawing.Size(50, 50);
             this.exportButton.TabIndex = 2;
@@ -123,6 +113,7 @@
             // 
             // landButton
             // 
+            this.landButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.landButton.BackColor = System.Drawing.Color.White;
             this.landButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("landButton.BackgroundImage")));
             this.landButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
@@ -136,6 +127,7 @@
             // 
             // waterButton
             // 
+            this.waterButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.waterButton.BackColor = System.Drawing.Color.White;
             this.waterButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("waterButton.BackgroundImage")));
             this.waterButton.ForeColor = System.Drawing.Color.White;
@@ -146,28 +138,43 @@
             this.waterButton.UseVisualStyleBackColor = false;
             this.waterButton.Click += new System.EventHandler(this.waterButton_Click);
             // 
-            // mountainButton
+            // mapPanel
             // 
-            this.mountainButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("mountainButton.BackgroundImage")));
-            this.mountainButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.mountainButton.Location = new System.Drawing.Point(4, 227);
-            this.mountainButton.Name = "mountainButton";
-            this.mountainButton.Size = new System.Drawing.Size(50, 50);
-            this.mountainButton.TabIndex = 5;
-            this.mountainButton.UseVisualStyleBackColor = true;
-            this.mountainButton.Click += new System.EventHandler(this.mountainButton_Click);
+            this.mapPanel.Controls.Add(this.panel1);
+            this.mapPanel.Controls.Add(this.checkBox1);
+            this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mapPanel.Location = new System.Drawing.Point(0, 0);
+            this.mapPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.mapPanel.Name = "mapPanel";
+            this.mapPanel.Size = new System.Drawing.Size(800, 450);
+            this.mapPanel.TabIndex = 2;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox1.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("checkBox1.BackgroundImage")));
+            this.checkBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(3, 3);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(25, 25);
+            this.checkBox1.TabIndex = 0;
+            this.checkBox1.UseVisualStyleBackColor = false;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.GridOption_Toggle);
             // 
             // Map
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.mapPanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Map";
             this.Text = "Map";
-            this.mapPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.mapPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

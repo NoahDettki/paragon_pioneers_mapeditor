@@ -125,13 +125,13 @@ namespace ParagonPioneers {
 
         private void DrawGridTiles(PaintEventArgs e)
         {
-            for (int col = 0; col < tileGrid.GetLength(0); col++)
+            for (int col = 0; col < tileGrid.GetLength(1); col++)
             {
-                for (int row = 0; row < tileGrid.GetLength(1); row++)
+                for (int row = 0; row < tileGrid.GetLength(0); row++)
                 {
                     //TODO maybe switch row and col
 
-                    Tile tile = tileGrid[col, row];
+                    Tile tile = tileGrid[row, col];
 
                     // Draw additional background layer for coast
                     if (tile.IsTileType(Tile.Type.Coast))
@@ -169,17 +169,17 @@ namespace ParagonPioneers {
             PointF start;
             PointF end;
             // Vertical lines
-            for (int col = 1; col < tileGrid.GetLength(0); col++)
+            for (int row = 1; row < tileGrid.GetLength(1); row++)
             {
-                start = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y);
-                end = new PointF(mapOffset.X + col * currentTileSize, mapOffset.Y + tileGrid.GetLength(1) * currentTileSize);
+                start = new PointF(mapOffset.X + row * currentTileSize, mapOffset.Y);
+                end = new PointF(mapOffset.X + row * currentTileSize, mapOffset.Y + tileGrid.GetLength(1) * currentTileSize);
                 e.Graphics.DrawLine(pen, start, end);
             }
             // Horrizontal lines
-            for (int row = 1; row < tileGrid.GetLength(1); row++)
+            for (int col = 1; col < tileGrid.GetLength(0); col++)
             {
-                start = new PointF(mapOffset.X, mapOffset.Y + row * currentTileSize);
-                end = new PointF(mapOffset.X + tileGrid.GetLength(0) * currentTileSize, mapOffset.Y + row * currentTileSize);
+                start = new PointF(mapOffset.X, mapOffset.Y + col * currentTileSize);
+                end = new PointF(mapOffset.X + tileGrid.GetLength(0) * currentTileSize, mapOffset.Y + col * currentTileSize);
                 e.Graphics.DrawLine(pen, start, end);
             }
         }

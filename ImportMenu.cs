@@ -28,11 +28,9 @@ namespace ParagonPioneers {
             // Make sure that the input is rectangular. Every line must have the same length.
             string[] lines = input.Split('\n');
             int firstLineLength = lines[0].TrimEnd('\r').Length; // Windows is weird. Trim '\r' from the first line
-            Console.WriteLine(firstLineLength);
 
             foreach (string l in lines) {
                 int lineLength = l.TrimEnd('\r').Length; // Windows is still weird. Trim '\r' from each line
-                Console.WriteLine(lineLength);
                 if (lineLength != firstLineLength) {
                     MessageBox.Show("Every line must have the same number of characters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
