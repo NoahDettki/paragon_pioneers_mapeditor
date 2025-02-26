@@ -43,7 +43,12 @@ namespace ParagonPioneers
             return type;
         }
 
-        public Point GetSpritesheetCoordinate()
+        public bool IsTileType(Type type)
+        {
+            return this.type == type;
+        }
+
+        public Point GetSpritesheetCoordinate() 
         {
             return spriteCoord;
         }

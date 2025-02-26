@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ namespace ParagonPioneers
         private bool isDragging = false;
         private bool isPainting = false;
         private Point lastDragPoint;
+        private Point? lastPaintedTile;
         private Point dragOffset;
         private Point lastPaintedTile = new Point(-1, -1);
 
@@ -30,7 +32,7 @@ namespace ParagonPioneers
         private char selectedTile = ' ';
         private bool showMountainTutorial = true;
 
-        private Image mapErrorImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "MapError.jpg"));
+        private Image mapErrorImage = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "MapError.png"));
         private Image tileSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "Background_Tiles.png"));
         private Image treeSpritesheet = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "World_Environment.png"));
         private Image toggleGridOn = Image.FromFile(Path.Combine(Application.StartupPath, "../../Images", "ToggleGridOn.png"));
@@ -139,33 +141,33 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             mapPanel.Initialize(tileSpritesheet, treeSpritesheet, SPRITE_SIZE, tileGrid, mapErrorImage);
         }
 
-        private void PopulateGrid()
+        private void PopulateGrid() 
         {
-            int cols = tiles.GetLength(0);
-            int rows = tiles.GetLength(1);
+            int rows = tiles.GetLength(0);
+            int cols = tiles.GetLength(1);
 
             // Set the correct Tile at each position
-            for (int col = 0; col < cols; col++)
-            {
-                for (int row = 0; row < rows; row++)
+            for (int row = 0; row < rows; row++) 
+            {                
+                for (int col = 0; col < cols; col++) 
                 {
                     tileGrid[col, row] = new Tile(tiles[col, row]);
                 }
             }
             // Calculate the correct sprite at each position
             // (All tiles have to be set before this can happen)
-            for (int col = 0; col < cols; col++)
+            for (int row = 0; row < rows; row++) 
             {
-                for (int row = 0; row < rows; row++)
+                for (int col = 0; col < cols; col++)
                 {
                     CalculateImageCoordinate(col, row);
                 }
             }
             // Calculate all mountain ranges
             allMountainTiles = new List<Point>();
-            for (int col = 0; col < cols; col++) 
+            for (int row = 0; row < rows; row++) 
             {
-                for (int row = 0; row < rows; row++) 
+                for (int col = 0; col < cols; col++) 
                 {
                     if (tileGrid[col, row].GetTileType() == Tile.Type.Mountain)
                     {
@@ -268,15 +270,16 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                 int coastDirection = GetNeighboursOfType(Tile.Type.Coast, point);
                 int waterNeighbour = GetNeighboursOfType(Tile.Type.Water, point, true);
                 int landNeighbour = GetNeighboursOfType(Tile.Type.Land, point);
+                int mountainNeighbour = GetNeighboursOfType(Tile.Type.Mountain, point);
 
                 if (HasOneNeighbour(coastDirection) || coastDirection == 0)
                 {
                     tileGrid[x, y].SetSpritesheetCoordinate(new Point(-1, -1));
-                    tileGrid[x, y].SetBackgroundCoordinate(new Point(-1, -1));
+                    tileGrid[x, y].SetBackgroundCoordinate(new Point(1, 2));
                     return;
                 }
 
-                if (IsOposite(waterNeighbour, landNeighbour) && (coastDirection == 3 || coastDirection == 12))
+                if ((IsOposite(waterNeighbour, landNeighbour) || IsOposite(waterNeighbour, landNeighbour)) && (coastDirection == 3 || coastDirection == 12))
                 {
                     tileGrid[x, y].SetSpritesheetCoordinate(GetStraightCoastPoint(waterNeighbour, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetStraightCoastPoint(waterNeighbour));
@@ -286,7 +289,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     tileGrid[x, y].SetSpritesheetCoordinate(GetOuterCornerCoastPoint(coastDirection, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetOuterCornerCoastPoint(coastDirection));
                 }
-                else if (landNeighbour == 0)
+                else if (landNeighbour == 0 && mountainNeighbour == 0)
                 {
                     tileGrid[x, y].SetSpritesheetCoordinate(GetInnerCornerCoastPoint(coastDirection, true));
                     tileGrid[x, y].SetBackgroundCoordinate(GetInnerCornerCoastPoint(coastDirection));
@@ -317,7 +320,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     return new Point(3, 3);
                 if (coast == 10)
                     return new Point(3, 2);
-            }
+                return new Point(1, 2);
+            } 
             else
             {
                 if (coast == 5)
@@ -328,8 +332,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     return new Point(4, 7);
                 if (coast == 10)
                     return new Point(4, 6);
+                return new Point(-1, -1);
             }
-            return new Point(-1, -1);
         }
 
         private Point GetOuterCornerCoastPoint(int coast, bool useWaterSprite = false)
@@ -344,6 +348,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     return new Point(0, 4);
                 if (coast == 10)
                     return new Point(0, 2);
+                return new Point(1, 2);
             }
             else
             {
@@ -355,8 +360,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     return new Point(0, 7);
                 if (coast == 10)
                     return new Point(0, 5);
+                return new Point(-1, -1);
             }
-            return new Point(-1, -1);
         }
 
         private bool IsOposite(int a, int b)
@@ -376,7 +381,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     return new Point(2, 3);
                 if (water == 8)
                     return new Point(0, 3);
-            }
+                return new Point(1, 2);
+            } 
             else
             {
                 if (water == 1)
@@ -387,8 +393,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                     return new Point(2, 6);
                 if (water == 8)
                     return new Point(0, 6);
+                return new Point(-1, -1);
             }
-            return new Point();
         }
 
         private int GetNeighboursOfType(Tile.Type type, Point pos, bool countNoneAsTile = false)
@@ -501,6 +507,8 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                 CalculateImageCoordinate(x, y - 1);
                 CalculateImageCoordinate(x, y + 1);
 
+                lastPaintedTile = gridPos;
+
                 // The panel has to be drawn again to show the changes
                 mapPanel.Invalidate();
             }
@@ -541,7 +549,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                 lastDragPoint = currentPos;
             }
 
-            if (isPainting)
+            if (isPainting && lastPaintedTile != mapPanel.MouseToGrid(e.Location))
             {
                 SetTileAt(e.Location);
             }
@@ -560,7 +568,6 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             }
             if (e.Button == MouseButtons.Left)
             {
-                SetTileAt(e.Location);
                 isPainting = false;
                 lastPaintedTile = new Point(-1, -1);
             }
