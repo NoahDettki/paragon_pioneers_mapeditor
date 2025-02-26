@@ -488,6 +488,10 @@ First draw a complete ring. You can then decide if the ring should form a mounta
                 }
                 else
                 {
+                    if (tileGrid[x, y].IsTileType(Tile.Type.Mountain))
+                    {
+                        RemoveMountainTile(new Point(x, y));
+                    }
                     tiles[x, y] = selectedTile;
                     tileGrid[x, y].SetTileType(Tile.CharToType(selectedTile));
                 }

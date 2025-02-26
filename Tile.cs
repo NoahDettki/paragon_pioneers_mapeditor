@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParagonPioneers
 {
@@ -19,10 +15,10 @@ namespace ParagonPioneers
             Tree2,
             Tree3,
         }
-        private Type type;
-        private int treeCount;
-        private Point spriteCoord;
-        private Point backgroundCoord;
+        private Type type, previousType;
+        private int treeCount, previousTreeCount;
+        private Point spriteCoord, previousSpriteCoord;
+        private Point backgroundCoord, previousBackgroundCoord;
 
         public Tile(char c)
         {
@@ -31,11 +27,20 @@ namespace ParagonPioneers
 
         public void SetTileType(Type type)
         {
+            previousType = this.type;
+            previousTreeCount = treeCount;
             this.type = type;
             if (type != Type.Land)
             {
                 treeCount = 0;
             }
+        }
+
+        public void SetToPreviousTileType() {
+            this.type = previousType;
+            this.treeCount = previousTreeCount;
+            this.spriteCoord = previousSpriteCoord;
+            this.backgroundCoord = previousBackgroundCoord;
         }
 
         public Type GetTileType()
@@ -55,6 +60,7 @@ namespace ParagonPioneers
 
         public void SetSpritesheetCoordinate(Point coord)
         {
+            previousSpriteCoord = this.spriteCoord;
             this.spriteCoord = coord;
         }
 
@@ -65,6 +71,7 @@ namespace ParagonPioneers
 
         public void SetBackgroundCoordinate(Point coord)
         {
+            previousBackgroundCoord = this.backgroundCoord;
             this.backgroundCoord = coord;
         }
 
