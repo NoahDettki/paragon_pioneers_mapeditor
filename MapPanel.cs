@@ -178,17 +178,17 @@ namespace ParagonPioneers
             PointF start;
             PointF end;
             // Vertical lines
-            for (int row = 1; row < tileGrid.GetLength(1); row++)
+            for (int x = 1; x < tileGrid.GetLength(0); x++)
             {
-                start = new PointF(mapOffset.X + row * currentTileSize, mapOffset.Y);
-                end = new PointF(mapOffset.X + row * currentTileSize, mapOffset.Y + tileGrid.GetLength(1) * currentTileSize);
+                start = new PointF(mapOffset.X + x * currentTileSize, mapOffset.Y);
+                end = new PointF(mapOffset.X + x * currentTileSize, mapOffset.Y + tileGrid.GetLength(1) * currentTileSize);
                 e.Graphics.DrawLine(pen, start, end);
             }
             // Horrizontal lines
-            for (int col = 1; col < tileGrid.GetLength(0); col++)
+            for (int y = 1; y < tileGrid.GetLength(1); y++)
             {
-                start = new PointF(mapOffset.X, mapOffset.Y + col * currentTileSize);
-                end = new PointF(mapOffset.X + tileGrid.GetLength(0) * currentTileSize, mapOffset.Y + col * currentTileSize);
+                start = new PointF(mapOffset.X, mapOffset.Y + y * currentTileSize);
+                end = new PointF(mapOffset.X + tileGrid.GetLength(0) * currentTileSize, mapOffset.Y + y * currentTileSize);
                 e.Graphics.DrawLine(pen, start, end);
             }
         }
