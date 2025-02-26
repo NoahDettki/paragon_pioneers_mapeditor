@@ -581,25 +581,25 @@ First draw a complete ring. You can then decide if the ring should form a mounta
 
         private void waterButton_Click(object sender, EventArgs e)
         {
-            EndMountainMode();
+            EndMountainMode(true);
             selectedTile = 'W';
         }
 
         private void landButton_Click(object sender, EventArgs e)
         {
-            EndMountainMode();
+            EndMountainMode(true);
             selectedTile = '0';
         }
 
         private void treeButton_Click(object sender, EventArgs e)
         {
-            EndMountainMode();
+            EndMountainMode(true);
             selectedTile = '1';
         }
 
         private void coastButton_Click(object sender, EventArgs e)
         {
-            EndMountainMode();
+            EndMountainMode(true);
             selectedTile = 'K';
         }
 
@@ -722,8 +722,16 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             selectedTile = 'G';
         }
 
-        private void EndMountainMode()
+        private void EndMountainMode(bool revertChanges=false)
         {
+            if (revertChanges && mountainMode) 
+            {
+                foreach (Point p in mountainRange) 
+                {
+                    tileGrid[p.X, p.Y].SetToPreviousTileType();
+                }
+                mapPanel.Invalidate();
+            }
             mountainMode = false;
             selectedTile = ' ';
         }
