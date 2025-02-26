@@ -160,7 +160,7 @@ namespace ParagonPioneers
                     // Draw the tree layer
                     for (int i = 0; i < tile.GetTreeCount(); i++)
                     {
-                        DrawImage(e, x + i * 0.2f, y + i * 0.3f, treeSheet, treeRect);
+                        DrawImage(e, x + i * 0.3f, y + i * 0.2f, treeSheet, treeRect);
                     }
 
                     // Draw Error Image
