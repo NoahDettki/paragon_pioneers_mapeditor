@@ -270,7 +270,7 @@ First draw a complete ring. You can then decide if the ring should form a mounta
 
                 int coastDirection = GetNeighboursOfType(Tile.Type.Coast, point);
                 int waterNeighbour = GetNeighboursOfType(Tile.Type.Water, point, true);
-                int landNeighbour = GetNeighboursOfType(Tile.Type.Land, point);
+                int landNeighbour = GetNeighboursOfType(new[] { Tile.Type.Land, Tile.Type.Mountain }, point);
                 int mountainNeighbour = GetNeighboursOfType(Tile.Type.Mountain, point);
 
                 if (HasOneNeighbour(coastDirection) || coastDirection == 0)
@@ -432,6 +432,80 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             if (IsInbounds(pos.X - 1, pos.Y))
             {
                 left = tileGrid[pos.X - 1, pos.Y].GetTileType() == type;
+            }
+            else
+            {
+                left = countNoneAsTile;
+            }
+
+            int index = 0;
+            index += top ? 1 : 0;
+            index += bottom ? 2 : 0;
+            index += left ? 4 : 0;
+            index += right ? 8 : 0;
+
+            return index;
+        }
+
+        private int GetNeighboursOfType(Tile.Type[] types, Point pos, bool countNoneAsTile = false)
+        {
+            bool top, right, bottom, left;
+            top = right = bottom = left = false;
+
+            if (IsInbounds(pos.X, pos.Y - 1))
+            {
+                foreach (Tile.Type type in types)
+                {
+                    if (top)
+                        break;
+
+                    top = tileGrid[pos.X, pos.Y - 1].GetTileType() == type;
+                }
+            }
+            else
+            {
+                top = countNoneAsTile;
+            }
+
+            if (IsInbounds(pos.X + 1, pos.Y))
+            {
+                foreach (Tile.Type type in types)
+                {
+                    if (right)
+                        break;
+
+                    right = tileGrid[pos.X + 1, pos.Y].GetTileType() == type;
+                }
+            }
+            else
+            {
+                right = countNoneAsTile;
+            }
+
+            if (IsInbounds(pos.X, pos.Y + 1))
+            {
+                foreach (Tile.Type type in types)
+                {
+                    if (bottom)
+                        break;
+
+                    bottom = tileGrid[pos.X, pos.Y + 1].GetTileType() == type;
+                }
+            }
+            else
+            {
+                bottom = countNoneAsTile;
+            }
+
+            if (IsInbounds(pos.X - 1, pos.Y))
+            {
+                foreach (Tile.Type type in types)
+                {
+                    if (left)
+                        break;
+
+                    left = tileGrid[pos.X - 1, pos.Y].GetTileType() == type;
+                }
             }
             else
             {
