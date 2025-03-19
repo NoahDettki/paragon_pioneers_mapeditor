@@ -26,7 +26,7 @@ namespace ParagonPioneers
             // Validate the input. Only specific characters are allowed.
             if (!IsValidInput(input))
             {
-                MessageBox.Show("Your data is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Invalid characters. Make sure the map only contains one of these characters: W K G 0 1 2 3", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
