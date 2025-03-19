@@ -695,11 +695,11 @@ First draw a complete ring. You can then decide if the ring should form a mounta
         private void exportButton_Click(object sender, EventArgs e)
         {
             // Before saving first check if the map is valid. Tell the user if it is not valid
-            for (int col = 0; col < tiles.GetLength(0); col++)
+            for (int x = 0; x < tiles.GetLength(0); x++)
             {
-                for (int row = 0; row < tiles.GetLength(1); row++)
+                for (int y = 0; y < tiles.GetLength(1); y++)
                 {
-                    if (tileGrid[col, row].GetSpritesheetCoordinate().X == -1)
+                    if (tileGrid[x, y].GetSpritesheetCoordinate().X == -1)
                     {
                         // This tile is not valid
                         String message = "The map is currently not valid. Please correct the map layout before exporting.";
@@ -745,17 +745,21 @@ First draw a complete ring. You can then decide if the ring should form a mounta
             }
         }
 
+        /// <summary>
+        /// This method is used to transform the char array back into a single string to save it in a txt file.
+        /// </summary>
+        /// <returns>a single string containing all map info</returns>
         public string CharArrayToString()
         {
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < tiles.GetLength(0); i++)
+            for (int y = 0; y < tiles.GetLength(1); y++)
             {
-                for (int j = 0; j < tiles.GetLength(1); j++)
+                for (int x = 0; x < tiles.GetLength(0); x++)
                 {
-                    sb.Append(tiles[i, j]);
+                    sb.Append(tiles[x, y]);
                 }
-                if (i < tiles.GetLength(0) - 1) // Add newline after each row, except the last one
+                if (y < tiles.GetLength(0) - 1) // Add newline after each row, except the last one
                 {
                     sb.Append(Environment.NewLine);
                 }
